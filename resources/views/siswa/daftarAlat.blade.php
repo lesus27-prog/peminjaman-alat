@@ -74,7 +74,7 @@
                                 <option value="11:30:00">11:30</option>
                                 <option value="12:00:00">12:00</option>
                                 <option value="10:55:00">10:55</option>
-                                <option value="18:38:00">18:38</option>
+                                <option value="20:21:00">20:21</option>
                                 <option value="13:45:00">13:45</option>
                                 <option value="14:30:00">14:30</option>
                                 <option value="15:15:00">15:15</option>
