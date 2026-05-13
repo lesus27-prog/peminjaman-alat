@@ -143,3 +143,8 @@ Route::post('/save-token', function (Request $request) {
         'success' => true
     ]);
 })->middleware('auth');
+
+
+Route::get('/imagick-test', function () {
+    return extension_loaded('imagick') ? 'Imagick OK' : 'No Imagick';
+});

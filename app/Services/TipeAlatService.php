@@ -27,8 +27,10 @@ class TipeAlatService
 
             $url = url('scan/' . $kode_alat);
             // 🔥 INI FIX UTAMA (AMAN DARI IMAGICK)
-            $qrImage = QrCode::format('png')
-                ->size(300)
+            $qrImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
+                ->errorCorrection('Q')
+                ->size(400)
+                ->margin(2)
                 ->generate($url);
 
             file_put_contents($fullPath, $qrImage);

@@ -14,6 +14,7 @@
         "ext-zip": "*",
         "barryvdh/laravel-dompdf": "*",
         "cuyz/valinor": "^2.4",
+        "endroid/qr-code": "^5.0",
         "kreait/firebase-php": "8.0",
         "kreait/laravel-firebase": "*",
         "laravel/framework": "^12.0",
