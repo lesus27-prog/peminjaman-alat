@@ -6,9 +6,9 @@
     <title>Login - SiPinjam</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('deskap/vendors/styles/core.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('deskap/vendors/styles/icon-font.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('deskap/vendors/styles/style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('deskap/vendors/styles/core.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('deskap/vendors/styles/icon-font.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ secure_asset('deskap/vendors/styles/style.css') }}" />
     <link rel="stylesheet" href="{{ 'css/universal.css' }}">
     <link rel="stylesheet" href="{{ 'css/button.css' }}">
     <link rel="stylesheet" href="{{ 'css/login.css' }}">
@@ -19,7 +19,7 @@
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <div class="brand-logo">
                 <a href="#">
-                    <img src="{{ asset('logo.png') }}" alt="" />
+                    <img src="{{ secure_asset('logo.png') }}" alt="" />
                 </a>
             </div>
         </div>
