@@ -1,32 +1,34 @@
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
-# Install dependency sistem
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    zip \
+    git unzip zip \
     libzip-dev \
     libmagickwand-dev \
-    imagemagick
+    imagemagick \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql zip
+# GD + ZIP + MYSQL
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install gd pdo pdo_mysql zip
 
-# Install Imagick
+# Imagick
 RUN pecl install imagick && docker-php-ext-enable imagick
 
-# Set working directory
 WORKDIR /app
 
 COPY . .
 
-# Install composer
+# Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# IMPORTANT: biar tidak error root
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN composer install --no-dev --optimize-autoloader
 
-# Laravel permission (penting)
+RUN php artisan storage:link || true
 RUN chmod -R 775 storage bootstrap/cache
 
-# Jalankan server
 CMD php artisan serve --host=0.0.0.0 --port=$PORT
