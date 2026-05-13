@@ -60,7 +60,7 @@ class TipeAlatController extends Controller
                 $tipe->update(['gambar' => 'gambarTipe/' . $namaFile]);
             }
 
-            // $tipeAlatService->generateQr($tipe, $tipe->stok);
+            $tipeAlatService->generateQr($tipe, $tipe->stok);
 
             DB::commit();
             return redirect()->route('tipe.index')->with('store_success', ucwords(strtolower($tipe->nama_tipe)));
@@ -73,7 +73,7 @@ class TipeAlatController extends Controller
 
     public function update(Request $request, $id)
     {
-       
+
         $request->validate([
             'nama_tipe' => [
                 'required',

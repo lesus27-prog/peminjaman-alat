@@ -6,9 +6,9 @@
     <title>Login - SiPinjam</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="{{ secure_asset('deskap/vendors/styles/core.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ secure_asset('deskap/vendors/styles/icon-font.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ secure_asset('deskap/vendors/styles/style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('deskap/vendors/styles/core.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('deskap/vendors/styles/icon-font.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('deskap/vendors/styles/style.css') }}" />
     <link rel="stylesheet" href="{{ 'css/universal.css' }}">
     <link rel="stylesheet" href="{{ 'css/button.css' }}">
     <link rel="stylesheet" href="{{ 'css/login.css' }}">
@@ -19,7 +19,7 @@
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <div class="brand-logo">
                 <a href="#">
-                    <img src="{{ secure_asset('logo.png') }}" alt="" />
+                    <img src="{{ asset('logo.png') }}" alt="" />
                 </a>
             </div>
         </div>
@@ -51,25 +51,27 @@
                         @endif
                         <form action="{{ route('login') }}" method="post">
                             @csrf
-                        <div class="input-group custom">
-                            <input type="text" class="form-control" placeholder="Username" name="username" required>
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    <i class="icon-copy dw dw-user1"></i>
-                                </span>
+                            <div class="input-group custom">
+                                <input type="text" class="form-control" placeholder="Username" name="username"
+                                    required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="icon-copy dw dw-user1"></i>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="input-group custom">
-                            <input type="password" class="form-control" placeholder="Password" name="password" required>
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    <i class="dw dw-padlock1"></i>
-                                </span>
+                            <div class="input-group custom">
+                                <input type="password" class="form-control" placeholder="Password" name="password"
+                                    required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="dw dw-padlock1"></i>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        <button class="btn btn-universal btn-block" id="btn-login">
-                            Masuk
-                        </button>
+                            <button class="btn btn-universal btn-block" id="btn-login">
+                                Masuk
+                            </button>
                         </form>
                     </div>
                 </div>
