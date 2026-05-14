@@ -48,7 +48,7 @@ class DashboardService
     public function dashboardKabeng()
     {
         $siswa = Siswa::count();
-        $alat = TipeAlat::sum('stok');
+        $alat = TipeAlat::where('kondisi_alat', 'baik')->sum('stok');
         $jenis = JenisAlat::count();
 
         $alatBermasalah = DetailAlat::whereIn('kondisi_alat', [

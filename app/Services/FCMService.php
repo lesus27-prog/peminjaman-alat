@@ -8,12 +8,12 @@ class FCMService
 {
     public static function send($token, $title, $body)
     {
-        $factory = (new Factory)
-            ->withServiceAccount(
-                json_decode(env('FIREBASE_CREDENTIALS_JSON'), true)
-            );
         // $factory = (new Factory)
-        //     ->withServiceAccount(storage_path('app/firebase/firebase.json'));
+        //     ->withServiceAccount(
+        //         json_decode(env('FIREBASE_CREDENTIALS_JSON'), true)
+        //     );
+        $factory = (new Factory)
+            ->withServiceAccount(storage_path('app/firebase/firebase.json'));
 
         $messaging = $factory->createMessaging();
 

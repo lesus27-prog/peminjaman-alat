@@ -74,7 +74,7 @@
                                 <option value="11:30:00">11:30</option>
                                 <option value="12:00:00">12:00</option>
                                 <option value="10:55:00">10:55</option>
-                                <option value="11:10:00">11:10</option>
+                                <option value="19:58:00">19:58</option>
                                 <option value="13:45:00">13:45</option>
                                 <option value="14:30:00">14:30</option>
                                 <option value="15:15:00">15:15</option>
@@ -372,7 +372,8 @@
                     <div id="hidden-input"></div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-back px-4" data-dismiss="modal">  <i class="fa-solid fa-circle-xmark"></i>
+                    <button type="button" class="btn btn-back px-4" data-dismiss="modal"> <i
+                            class="fa-solid fa-circle-xmark"></i>
                         Batal
                     </button>
                     <button type="submit" class="btn btn-universal px-4 font-weight-bold" id="btn-konfirmasi">
