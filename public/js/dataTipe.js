@@ -88,10 +88,9 @@ $(document).ready(function () {
         setEditTipeDisabled(false);
     });
 
-    // ===================== EXPORT =====================
     window.exportPdf = function () {
         let idJenis = filterState.id_jenis;
-        let url = "/export-tipe";
+        let url = "/export-laporan-alat";
 
         if (idJenis) {
             url += "?idJenis=" + encodeURIComponent(idJenis);

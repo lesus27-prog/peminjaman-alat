@@ -1,11 +1,11 @@
 @extends('layouts.siswa')
 @section('title', 'Daftar Alat')
 @section('link')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('deskap/src/plugins/switchery/switchery.min.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/content.css') }}">
     <link rel="stylesheet" href="{{ asset('css/universal.css') }}">
@@ -26,7 +26,8 @@
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><i class="bx bx-home"></i>
+                                <li class="breadcrumb-item">
+                                    <i class="bx bx-home"></i>
                                     <a href="{{ route('dashboardSiswa.index') }}">Dashboard Siswa</a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page">
@@ -39,8 +40,6 @@
             </div>
             <div class="card-body p-4 card-input mb-4">
                 <div class="row mx-0 gx-3 gy-2">
-
-                    <!-- TANGGAL -->
                     <div class="col-md-3 box-input">
                         <label class="filter-label">Tanggal Pakai</label>
                         <div class="input-group">
@@ -54,7 +53,6 @@
                         </div>
                     </div>
 
-                    <!-- JAM -->
                     <div class="col-md-3 box-input">
                         <label class="filter-label">Jam Pakai</label>
                         <div class="input-group">
@@ -74,15 +72,15 @@
                                 <option value="11:30:00">11:30</option>
                                 <option value="12:00:00">12:00</option>
                                 <option value="13:45:00">13:45</option>
-                                <option value="14:30:00">14:30</option>
+                                <option value="14:30:00">16:47</option>
                                 <option value="15:15:00">15:15</option>
+                                <option value="14:58:00">14:48</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- JENIS -->
                     <div class="col-md-3 box-input">
-                        <label class="filter-label">Jenis</label>
+                        <label class="filter-label">Jenis Alat</label>
                         <select id="filterJenis" class="form-control form-input">
                             <option value="">All Jenis</option>
                             @foreach ($jenis as $jns)
@@ -91,9 +89,8 @@
                         </select>
                     </div>
 
-                    <!-- TIPE -->
                     <div class="col-md-3 box-input">
-                        <label class="filter-label">Tipe</label>
+                        <label class="filter-label">Tipe Alat</label>
                         <select id="filterTipe" class="form-control form-input">
                             <option value="">All Tipe</option>
                             @foreach ($tipes as $tipe)
@@ -135,10 +132,16 @@
                             </div>
                             <div class="col-12 d-flex justify-content-between align-items-center mb-1 box-search">
                                 <div id="show-entries" class="ml-0"></div>
-                                <div class="d-flex align-items-center">
-                                    <span class="mr-2"><i class="bi bi-list"></i></span>
+                                <div class="view-toggle">
+                                    <span>
+                                        <i class="bi bi-list view-icon" id="list-icon"></i>
+                                    </span>
+
                                     <input type="checkbox" class="switch-btn" id="toggle-view" />
-                                    <span class="ml-2"><i class="bi bi-grid"></i></span>
+
+                                    <span>
+                                        <i class="bi bi-grid view-icon" id="grid-icon"></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -169,22 +172,19 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-shrink-0 " style="width:40px;">
                                                         <img src="{{ asset('storage/' . $tipe->gambar) }}"
-                                                            alt="{{ ucwords($tipe->nama_tipe) }}"
+                                                            class="img-tipe" alt="{{ ucwords($tipe->nama_tipe) }}"
                                                             style="width:40px; height:40px; object-fit:cover; border-radius:4px;">
                                                     </div>
-                                                    <div class=" ms-2 pl-2">
-                                                        <span class="fw-bold text-truncate "
-                                                            style="max-width: 150px;">{{ ucwords($tipe->nama_tipe) }}</span>
-
+                                                    <div class=" ms-2 pl-2" style="max-width: 150px;">
+                                                        <span class="fw-bold">{{ ucwords($tipe->nama_tipe) }}</span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>{{ ucwords($tipe->jenisAlat->nama_jenis) }}</td>
                                             <td>
                                                 @if ($tipe->stok > 0)
-                                                    <span class="status-pill available stok-tersedia">Tersedia
-                                                        :
-                                                        {{ $tipe->stok }}</span>
+                                                    <span class="status-pill available stok-tersedia">
+                                                        Tersedia : {{ $tipe->stok }}</span>
                                                 @else
                                                     <span class="status-pill empty stok-tersedia">Tidak Tersedia</span>
                                                 @endif
@@ -277,6 +277,8 @@
         <i class="fa fa-arrow-right"></i>
         Next
     </button>
+@endsection
+@section('modal')
     <div class="modal fade" id="modal-detail-peminjaman" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-md modal-dialog-centered" role="document">
             <form action="{{ route('peminjamanTipe.store') }}" method="post" class="modal-content shadow">
@@ -291,14 +293,14 @@
                 </div>
                 <div class="modal-detail modal-body p-4">
                     <div class="card bg-light mb-3 shadow-sm rounded">
-                        <div class="card-body py-3">
+                        <div class="card-body box-waktu-pakai py-3">
                             <div class="row text-center">
                                 <div class="col-md-6">
                                     <small class="text-muted">Tanggal Pakai</small>
                                     <h6 id="modal-tanggal-mulai" class="font-weight-bold mb-0"></h6>
                                     <input type="hidden" name="tanggal_mulai" id="hidden-tanggal-mulai">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 jam-pakai">
                                     <small class="text-muted">Jam Pakai</small>
                                     <h6 id="modal-jam-mulai" class="font-weight-bold mb-0"></h6>
                                     <input type="hidden" name="jam_mulai" id="hidden-jam-mulai">
@@ -345,9 +347,10 @@
                                         <option value="12:15:00">12:15</option>
                                         <option value="17:37:00">17:37</option>
                                         <option value="13:00:00">13:00</option>
-                                        <option value="13:45:00">13:45</option>
-                                        <option value="14:30:00">14:30</option>
+                                        <option value="14:05:00">14:47</option>
+                                        <option value="15:26:00">15:26</option>
                                         <option value="15:15:00">15:15</option>
+                                        <option value="10:15:00">10:15</option>
                                     </select>
                                 </div>
                             </div>
@@ -370,9 +373,8 @@
                     <div id="hidden-input"></div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-back px-4" data-dismiss="modal"> <i
-                            class="fa-solid fa-circle-xmark"></i>
-                        Batal
+                    <button type="button" class="btn btn-back px-4" data-dismiss="modal">
+                        <i class="fa-solid fa-arrow-left"></i> Batal
                     </button>
                     <button type="submit" class="btn btn-universal px-4 font-weight-bold" id="btn-konfirmasi">
                         <i class="fa fa-thumbs-up mr-1"></i> Konfirmasi
@@ -381,596 +383,50 @@
             </form>
         </div>
     </div>
+
+    <div class="modal fade" id="prosesPemesananAlat-success" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body font-18">
+                    <h3 class="mb-20">Berhasil!</h3>
+                    <div class="mb-30">
+                        <img src="{{ asset('deskap/vendors/images/success.png') }}" alt="success" />
+                    </div>
+                    <p id="prosesPemesananAlat-success-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="{{ asset('deskap/src/plugins/switchery/switchery.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
-    <script src="{{ asset('deskap/src/plugins/sweetalert2/sweetalert2.all.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('deskap/src/plugins/switchery/switchery.min.js') }}"></script>
     <script src="{{ asset('js/daftarAlat.js') }}"></script>
     <script>
-        // let table;
-        // $(document).ready(function() {
-        // function syncCard() {
-        //     let visibleIds = [];
-
-        //     table.rows({
-        //         page: 'current'
-        //     }).every(function() {
-        //         let id = $(this.node()).data('id');
-        //         if (id) visibleIds.push(id);
-        //     });
-
-        //     $('.alat-card').closest('.col-lg-3').hide();
-
-        //     visibleIds.forEach(function(id) {
-        //         $('.alat-card[data-id="' + id + '"]')
-        //             .closest('.col-lg-3')
-        //             .show();
-        //     });
-        // }
-
-        // if (!$.fn.DataTable.isDataTable('.data-table')) {
-        //     table = $('.data-table').DataTable({
-        //         responsive: false,
-        //         autoWidth: false,
-        //         pageLength: 10,
-        //         lengthChange: true,
-        //         dom: 'lrtip',
-        //         ordering: false,
-        //         language: {
-        //             search: "",
-        //             zeroRecords: "Data tidak ditemukan",
-        //             info: "Showing _START_ to _END_ of _TOTAL_ entries",
-        //             lengthMenu: "_MENU_",
-        //             paginate: {
-        //                 next: ">>",
-        //                 previous: "<<"
-        //             }
-        //         }
-        //     });
-
-        //     $('#show-entries').html($('.dataTables_length').detach());
-        //     $('#show-entries').prepend('<span class="me-1">Show :</span>');
-        //     table.on('draw', function() {
-        //         syncCard();
-        //     });
-        // }
-
-        // let timeout;
-        // $('#searchInput').on('input', function() {
-        //     clearTimeout(timeout);
-        //     timeout = setTimeout(() => {
-        //         table.search(this.value).draw();
-        //     }, 300);
-        // });
-        // let delayTimer;
-        // $('#searchInput').on('keyup', function() {
-        //     clearTimeout(delayTimer);
-        //     let value = this.value;
-        //     delayTimer = setTimeout(function() {
-        //         table.search(value).draw();
-        //     }, 300);
-        // });
-
-        // let isCari = false;
-        // let tglMulai;
-
-        // let fpTglMulai = flatpickr("#tanggal-mulai", {
-        //     locale: "id",
-        //     minDate: "today",
-        //     altInput: true,
-        //     altInputClass: "form-control form-input",
-        //     altFormat: "l, d F Y",
-        //     disable: [date => date.getDay() === 0 || date.getDay() === 6],
-        //     onChange: function(selectedDates) {
-        //         if (!selectedDates.length) return;
-
-        //         if (isCari) {
-        //             reset();
-        //             // $('#box-ketersediaan').removeClass('active');
-        //             // $('#modal-detail-peminjaman').modal('hide');
-        //             isCari = false;
-        //         }
-        //         tglMulai = selectedDates[0];
-
-        //         let daysAdded = 0;
-        //         let tempDate = new Date(tglMulai);
-        //         while (daysAdded < 3) {
-        //             tempDate.setDate(tempDate.getDate() + 1);
-        //             if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) daysAdded++;
-        //         }
-        //         let tglMax = tempDate;
-
-        //         fpTglSelesai.set('minDate', tglMulai);
-        //         fpTglSelesai.set('maxDate', tglMax);
-
-        //         fpTglSelesai.clear();
-        //         $('#jam-selesai').val('');
-        //         $('#jam-selesai option').prop('disabled', false).css('color', '');
-
-        //         updateJamKembali();
-        //         checkNextButton();
-        //     }
-        // });
-
-        // let fpTglSelesai = flatpickr("#tanggal-selesai", {
-        //     locale: "id",
-        //     altInput: true,
-        //     altFormat: "l, d F Y",
-        //     disable: [date => date.getDay() === 0 || date.getDay() === 6],
-        //     onChange: updateJamKembali
-        // });
-
-        // function updateJamKembali() {
-        //     let jamMulai = $('#jam-mulai').val();
-        //     let tglSelesaiVal = $('#tanggal-selesai').val();
-
-        //     if (!jamMulai || !tglSelesaiVal || !tglMulai) return;
-
-        //     let tglSelesai = new Date(fpTglSelesai.input.value);
-
-        //     let [jamMulaiNum, menitMulaiNum] = jamMulai.split(':').map(Number);
-
-        //     let isSameDay = tglSelesai.toDateString() === tglMulai.toDateString();
-
-        //     let maxDate = fpTglSelesai.config.maxDate;
-        //     let isMaxDay = maxDate && tglSelesai.toDateString() === new Date(maxDate).toDateString();
-
-        //     $('#jam-selesai option').each(function() {
-        //         let val = $(this).val();
-        //         if (!val) return;
-
-        //         let [jamValNum, menitValNum] = val.split(':').map(Number);
-
-        //         let disable = false;
-
-        //         if (isSameDay) {
-        //             disable =
-        //                 (jamValNum < jamMulaiNum) ||
-        //                 (jamValNum === jamMulaiNum && menitValNum <= menitMulaiNum);
-        //         } else if (isMaxDay) {
-        //             disable =
-        //                 (jamValNum > jamMulaiNum) ||
-        //                 (jamValNum === jamMulaiNum && menitValNum > menitMulaiNum);
-        //         }
-
-        //         $(this).prop('disabled', disable)
-        //             .css('color', disable ? '#aaa' : '');
-        //     });
-
-        //     let selected = $('#jam-selesai').val();
-        //     if (selected) {
-        //         let [jam, menit] = selected.split(':').map(Number);
-
-        //         let invalid =
-        //             (isSameDay && (jam < jamMulaiNum || (jam === jamMulaiNum && menit <= menitMulaiNum))) ||
-        //             (isMaxDay && (jam > jamMulaiNum || (jam === jamMulaiNum && menit > menitMulaiNum)));
-
-        //         if (invalid) $('#jam-selesai').val('');
-        //     }
-
-        // }
-
-        // $('#jam-mulai').on('change', function() {
-        //     if (isCari) {
-        //         reset();
-        //         // $('#box-ketersediaan').removeClass('active');
-        //         // $('#modal-detail-peminjaman').modal('hide');
-        //         isCari = false;
-        //     }
-
-        //     $('#jam-selesai').val('');
-        //     updateJamKembali();
-        // });
-
-        // $('#tanggal-selesai').on('change', updateJamKembali);
-
-        // $('#filterJenis').select2({
-        //     placeholder: "All Jenis",
-        //     allowClear: true,
-        //     width: '100%'
-        // });
-
-        // $('#filterTipe').select2({
-        //     placeholder: "All Tipe",
-        //     allowClear: true,
-        //     width: '100%'
-        // });
-
-        // $('#filterJenis').on('change', function() {
-        //     let val = $(this).val();
-        //     table.column(2).search(val || '').draw();
-        // });
-
-        // $('#filterTipe').on('change', function() {
-        //     let val = $(this).val();
-        //     table.column(1).search(val || '').draw();
-        // });
-
-        // $('#btn-cari').on('click', function() {
-
-        //     let tanggalMulai = $('#tanggal-mulai').val();
-        //     let jamMulai = $('#jam-mulai').val();
-
-        //     if (!tanggalMulai || !jamMulai) {
-        //         toastr.warning('Silahkan pilih tanggal dan jam!');
-        //         return;
-        //     }
-
-        //     isCari = true;
-
-        //     let formatTglMulai = new Date(tanggalMulai).toLocaleDateString('id-ID', {
-        //         weekday: 'long',
-        //         year: 'numeric',
-        //         month: 'long',
-        //         day: 'numeric'
-        //     });
-
-        //     $('#tanggal').text(formatTglMulai);
-        //     $('#jam').text(jamMulai);
-
-        //     $.ajax({
-        //         url: "/check-alat",
-        //         // url: "{{ route('alat.check') }}",
-        //         type: "GET",
-        //         data: {
-        //             _token: "{{ csrf_token() }}",
-        //             tanggal: tanggalMulai,
-        //             jam: jamMulai
-        //         },
-        //         beforeSend: function() {
-        //             $('#btn-cari').prop('disabled', true).text('Loading...');
-        //         },
-        //         success: function(response) {
-
-        //             $('.btn-pinjam').each(function() {
-        //                 let jamKey = jamMulai;
-        //                 let id = parseInt($(this).data('id'));
-        //                 let stokTersedia = response[id]?.[jamKey] ?? 0;
-        //                 let row = $(this).closest('tr');
-        //                 let card = $('.alat-card[data-id="' + id + '"]');
-
-        //                 row.find('.jumlah')
-        //                     .attr('data-stok', stokTersedia)
-        //                     .val(stokTersedia > 0 ? 1 : 0);
-
-        //                 card.find('.jumlah')
-        //                     .attr('data-stok', stokTersedia)
-        //                     .val(stokTersedia > 0 ? 1 : 0);
-
-        //                 if (stokTersedia > 0) {
-        //                     card.find('.stok-tersedia')
-        //                         .removeClass('empty')
-        //                         .addClass('available')
-        //                         .text('Tersedia : ' + stokTersedia);
-
-        //                     row.find('.stok-tersedia')
-        //                         .removeClass('empty')
-        //                         .addClass('available')
-        //                         .text('Tersedia : ' + stokTersedia);
-
-        //                 } else {
-        //                     card.find('.stok-tersedia')
-        //                         .removeClass('available')
-        //                         .addClass('empty')
-        //                         .text('Tidak Tersedia');
-
-        //                     row.find('.stok-tersedia')
-        //                         .removeClass('available')
-        //                         .addClass('empty')
-        //                         .text('Tidak Tersedia');
-        //                 }
-
-        //                 if (stokTersedia <= 0) {
-        //                     $(this)
-        //                         .prop('disabled', true)
-        //                         .removeClass('btn-custom')
-        //                         .addClass('btn-secondary')
-        //                         .text('Habis');
-
-        //                     row.find('.btn-tambah, .btn-kurang')
-        //                         .prop('disabled', true);
-
-        //                     card.addClass('disabled-card');
-
-        //                     card.find('.btn-pinjam')
-        //                         .prop('disabled', true)
-        //                         .removeClass('btn-custom')
-        //                         .addClass('btn-secondary')
-        //                         .text('Habis');
-
-        //                     card.find('.btn-tambah, .btn-kurang')
-        //                         .prop('disabled', true);
-
-        //                 } else {
-        //                     $(this)
-        //                         .prop('disabled', false)
-        //                         .removeClass('btn-secondary')
-        //                         .addClass('btn-custom')
-        //                         .text('Pinjam');
-
-        //                     row.find('.btn-tambah, .btn-kurang')
-        //                         .prop('disabled', false);
-
-        //                     card.removeClass('disabled-card');
-
-        //                     card.find('.btn-pinjam')
-        //                         .prop('disabled', false)
-        //                         .removeClass('btn-secondary')
-        //                         .addClass('btn-custom')
-        //                         .text('Pinjam');
-
-        //                     card.find('.btn-tambah, .btn-kurang')
-        //                         .prop('disabled', false);
-        //                 }
-        //             });
-
-        //             $('#box-ketersediaan').addClass('active').slideDown(400);
-        //             $('html, body').animate({
-        //                 scrollTop: $('#box-ketersediaan').offset().top - 80
-        //             }, 500);
-
-        //             // applyFilter();
-        //             // reindexTable();
-        //         },
-        //         complete: function() {
-        //             $('#btn-cari').prop('disabled', false).html('<i class="fa-solid fa-magnifying-glass"></i> Cari');;
-        //         }
-        //     });
-        //     checkNextButton();
-        // });
-
-        // function reset() {
-        //     fpTglMulai.clear();
-        //     $('#jam-mulai').val('');
-        //     $('#filterJenis').val(null).trigger('change');
-        //     $('#filterTipe').val(null).trigger('change');
-        //     table.search('').columns().search('').draw();
-        //     $('#box-ketersediaan').removeClass('active').slideUp(300);
-        //     $('.alat-table, .alat-card').removeClass('active');
-        //     $('.btn-pinjam')
-        //         .removeClass('btn-danger')
-        //         .addClass('btn-custom')
-        //         .text('Pinjam');
-
-        //     $('.jumlah').val(1);
-        //     $('.btn-kurang').prop('disabled', true);
-
-        //     $('.btn-tambah').each(function() {
-        //         let stok = parseInt($(this).siblings('.jumlah').data('stok') || 0);
-        //         $(this).prop('disabled', stok <= 1);
-        //     });
-
-        //     // if (fpTglSelesai) fpTglSelesai.clear();
-
-        //     // $('#jam-selesai').val('');
-        //     // $('#jam-selesai option').prop('disabled', false).css('color', '');
-
-        //     // $('#list-alat').html('');
-        //     // $('#hidden-input').html('');
-        //     // $('#modal-tanggal-mulai').text('');
-        //     // $('#modal-jam-mulai').text('');
-
-        //     // $('.alat-card').show();
-        // }
-
-        // $('#btn-reset').on('click', function() {
-        //     reset();
-        //     checkNextButton();
-        //     // applyFilter();
-        // });
-
-        // var elem = document.querySelector('#toggle-view');
-        // var switchery = new Switchery(elem, {
-        //     size: 'small',
-        //     color: '#28a745',
-        //     secondaryColor: '#f56767'
-        // });
-
-        // function toggleView(isCard) {
-        //     if (isCard) {
-        //         $('#view-card').fadeIn(200);
-        //         $('#view-table').hide();
-        //     } else {
-        //         $('#view-table').fadeIn(200);
-        //         $('#view-card').hide();
-        //     }
-        // }
-
-        // $('#toggle-view').on('change', function() {
-        //     toggleView($(this).is(':checked'));
-        // });
-
-        // toggleView($('#toggle-view').is(':checked'));
-
-        // $(document).on('click', '.btn-tambah, .btn-kurang', function() {
-        //     let parent = $(this).closest('[data-id]');
-        //     let id = parent.data('id');
-        //     let input = parent.find('.jumlah');
-        //     let jumlah = parseInt(input.val());
-        //     let stok = parseInt(input.data('stok'));
-
-        //     if ($(this).hasClass('btn-tambah') && jumlah < stok) jumlah++;
-        //     if ($(this).hasClass('btn-kurang') && jumlah > 1) jumlah--;
-
-        //     $(`[data-id="${id}"]`).each(function() {
-        //         let jml = $(this).find('.jumlah');
-        //         let s = parseInt(jml.data('stok'));
-
-        //         jml.val(jumlah);
-
-        //         $(this).find('.btn-kurang').prop('disabled', jumlah <= 1);
-        //         $(this).find('.btn-tambah').prop('disabled', jumlah >= s);
-        //     });
-
-        // });
-
-        // function toggleAlat(idTipe) {
-        //     let alatTable = $(`.alat-table[data-id="${idTipe}"]`);
-        //     let alatCard = $(`.alat-card[data-id="${idTipe}"]`);
-
-        //     let btnTablePinjam = alatTable.find('.btn-pinjam');
-        //     let btnCardPinjam = alatCard.find('.btn-pinjam');
-
-        //     if (alatTable.hasClass('active') || alatCard.hasClass('active')) {
-        //         alatTable.removeClass('active');
-        //         alatCard.removeClass('active');
-
-        //         btnTablePinjam.removeClass('btn-danger')
-        //             .addClass('btn-custom')
-        //             .text('Pinjam');
-
-        //         btnCardPinjam.removeClass('btn-danger')
-        //             .addClass('btn-custom')
-        //             .text('Pinjam');
-
-        //     } else {
-        //         alatTable.addClass('active');
-        //         alatCard.addClass('active');
-
-        //         btnTablePinjam.addClass('btn-danger')
-        //             .removeClass('btn-custom')
-        //             .text('Batal');
-
-        //         btnCardPinjam.addClass('btn-danger')
-        //             .removeClass('btn-custom')
-        //             .text('Batal');
-        //     }
-        // }
-
-        // $(document).on('click', '.btn-pinjam', function(e) {
-        //     e.stopPropagation();
-        //     let idTipe = $(this).data('id');
-        //     toggleAlat(idTipe);
-        //     checkNextButton();
-        // });
-
-        // $('#btn-next').prop('disabled', true);
-
-        // function checkNextButton() {
-        //     let tanggalMulai = fpTglMulai.selectedDates.length > 0;
-        //     let jamMulai = $('#jam-mulai').val();
-        //     $('#btn-next').prop('disabled', !(tanggalMulai || jamMulai));
-        // }
-
-        // checkNextButton();
-        // $('#tanggal_pakai, #jam_pakai, .btn-pinjam').on('change click', checkNextButton);
-
-        // function checkKonfirmasiButton() {
-        //     let jumlahAlat = $('#list-alat tr').length;
-        //     $('#btn-konfirmasi').prop('disabled', jumlahAlat === 0);
-        // }
-
-        // $('#btn-next').on('click', function() {
-        //     let alatDipilih = $('.alat-table.active, .alat-card.active').length > 0;
-
-        //     if (!alatDipilih) {
-        //         toastr.error('Silakan pilih minimal 1 alat');
-        //         return;
-        //     }
-
-        //     let tglMulaiFormat = fpTglMulai.altInput.value;
-        //     let tglMulaiAsli = fpTglMulai.input.value;
-        //     let jamMulai = $('#jam-mulai').val();
-
-        //     $('#modal-tanggal-mulai').text(tglMulaiFormat);
-        //     $('#modal-jam-mulai').text(jamMulai);
-
-        //     $('#hidden-tanggal-mulai').val(tglMulaiAsli);
-        //     $('#hidden-jam-mulai').val(jamMulai);
-
-        //     $('#list-alat').html('');
-        //     $('#hidden-input').html('');
-
-        //     let alat = {};
-        //     $('.alat-table.active, .alat-card.active').each(function() {
-        //         let id = $(this).data('id');
-        //         let nama = $(this).data('nama');
-        //         let jumlah = parseInt($(this).find('.jumlah').val()) || 1;
-
-        //         alat[id] = {
-        //             nama,
-        //             jumlah
-        //         };
-        //     });
-
-        //     let index = 0;
-        //     for (let id in alat) {
-        //         let item = alat[id];
-
-        //         $('#list-alat').append(`
-    //             <tr data-index="${index}" data-id="${id}">
-    //                 <td>${index + 1}</td>
-    //                 <td>${item.nama}</td>
-    //                 <td>${item.jumlah}</td>
-    //                <td class="text-center">
-    //                     <button type="button" class="btn btn-sm btn-delete">
-    //                          <i class="fa-solid fa-trash-can"></i>
-    //                     </button>
-    //                 </td>
-    //                                         </tr>
-    //                                         `);
-
-        //         $('#hidden-input').append(`
-    //             <input type="hidden" name="alat[${index}][id]" value="${id}">
-    //             <input type="hidden" name="alat[${index}][jumlah]" value="${item.jumlah}">
-    //         `);
-
-        //         index++;
-        //     }
-        //     checkKonfirmasiButton();
-        //     $('#modal-detail-peminjaman').modal('show');
-
-        // function modalDeleteAlat(id) {
-        //     let alat = $(`.alat-table[data-id="${id}"], .alat-card[data-id="${id}"]`);
-
-        //     alat.removeClass('active')
-        //         .find('.btn-pinjam')
-        //         .removeClass('btn-danger')
-        //         .addClass('btn-custom')
-        //         .text('Pinjam');
-
-        //     alat.find('.jumlah').val(1);
-        //     alat.find('.btn-kurang').prop('disabled', true);
-
-        //     alat.find('.btn-tambah').each(function() {
-        //         let stok = parseInt($(this).siblings('.jumlah').data('stok')) || 0;
-        //         $(this).prop('disabled', stok <= 1);
-        //     });
-        // }
-
-        // $(document).on('click', '.btn-delete', function() {
-        //     let row = $(this).closest('tr');
-        //     let id = row.data('id');
-
-        //     modalDeleteAlat(id);
-        //     row.remove();
-
-        //     $(`#hidden-input input[value="${id}"]`).remove();
-        //     $('#list-alat tr').each(function(index) {
-        //         $(this).find('td:first').text(index + 1);
-        //     });
-        //     checkKonfirmasiButton();
-        // });
-
-        });
-        // });
-    </script>
-    <script>
-        @if (session('success'))
-            toastr.success(
-                "{{ session('success') }}",
-                "Berhasil", {
+        $(document).ready(function() {
+            @if (session('prosesPemesananAlat_success'))
+                $('#prosesPemesananAlat-success-text').html(
+                    '{{ session('prosesPemesananAlat_success') }}'
+                );
+
+                $('#prosesPemesananAlat-success').modal('show');
+
+                setTimeout(function() {
+                    $('#prosesPemesananAlat-success').modal('hide');
+                }, 3000);
+            @endif
+
+            @if (session('prosesPemesananAlat_error'))
+                toastr.error("{{ session('prosesPemesananAlat_error') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
                     progressBar: true,
-                    closeButton: true,
-                    timeOut: 3000,
-                    positionClass: "toast-top-right"
-                }
-            );
-        @endif
+                    closeButton: true
+                });
+            @endif
+        });
     </script>
 @endpush

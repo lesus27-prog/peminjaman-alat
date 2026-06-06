@@ -29,6 +29,8 @@ return new class extends Migration
                 'batal',
                 'selesai'
             ])->default('menunggu');
+            $table->boolean('is_reminder_sent')->default(false);
+            $table->string('kelas_siswa');
             $table->timestamps();
         });
 

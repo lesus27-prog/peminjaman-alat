@@ -202,7 +202,7 @@
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                      
+
 
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
@@ -235,6 +235,7 @@
         <div class="menu-block customscroll">
             <div class="sidebar-menu">
                 <ul id="accordion-menu">
+
                     <li class="dropdown">
                         <a href="{{ route('dashboardKabeng.index') }}" class="dropdown-toggle no-arrow">
                             <span class="micon bi bi-house-door-fill"></span><span class="mtext">Dashboard
@@ -242,9 +243,16 @@
                         </a>
                     </li>
                     <li class="dropdown">
-                        <a href="{{ route('kondisiAlatKabeng.index') }}" class="dropdown-toggle no-arrow">
-                            <span class="micon bi bi-exclamation-triangle-fill"></span><span class="mtext">Laporan Kondisi Alat</span>
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-people-fill"></span><span class="mtext">Laporan</span>
                         </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('siswa.index') }}">Data Siswa</a></li>
+                            <li><a href="{{ route('tipe.index') }}">Data Alat</a></li>
+                            <li><a href="{{ route('riwayatPinjamAdminKabeng.index') }}">Peminjaman</a></li>
+                            <li><a href="{{ route('kondisiAlat.index') }}">Kondisi Alat Bermasalah</a></li>
+
+                        </ul>
                     </li>
                     {{-- <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
@@ -256,7 +264,7 @@
 
                         </ul>
                     </li> --}}
- 
+
                 </ul>
             </div>
         </div>

@@ -26,9 +26,13 @@ class JenisAlatController extends Controller
             JenisAlat::create([
                 'nama_jenis' => strtolower($request->nama_jenis)
             ]);
-            return redirect()->route('jenis.index')->with('store_success',  ucwords(strtolower($request->nama_jenis)));
+            return redirect()
+                ->route('jenis.index')
+                ->with('store_success',  ucwords(strtolower($request->nama_jenis)));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('store_error', 'Data jenis alat gagal ditambahkan!');
         }
     }
 
@@ -47,17 +51,19 @@ class JenisAlatController extends Controller
             $jenis->update([
                 'nama_jenis' => strtolower($request->nama_jenis)
             ]);
-            return redirect()->route('jenis.index')->with('update_success', ucwords(strtolower($request->nama_jenis)));
+            return redirect()
+                ->route('jenis.index')
+                ->with('update_success', ucwords(strtolower($request->nama_jenis)));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('update_error', 'Data jenis gagal diudate!');
         }
     }
 
     public function checkNama(Request $request)
     {
-        $exists = JenisAlat::where('nama_jenis', strtolower($request->nama_jenis))
-            ->exists();
-
+        $exists = JenisAlat::where('nama_jenis', strtolower($request->nama_jenis))->exists();
         return response()->json([
             'exist' => $exists
         ]);
@@ -68,17 +74,13 @@ class JenisAlatController extends Controller
         try {
             $jenis = JenisAlat::findOrFail($id);
             $jenis->delete();
-            return redirect()->route('jenis.index')->with('delete_success', ucwords(strtolower($jenis->nama_jenis)));
+            return redirect()
+                ->route('jenis.index')
+                ->with('delete_success', ucwords(strtolower($jenis->nama_jenis)));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('delete_error', 'Data jenis alat gagal dihapus');
         }
-    }
-
-    public function exportPdf()
-    {
-        $jenis = JenisAlat::with('tipeAlat')->get();
-        $pdf = Pdf::loadView('admin.jenis.exportPdf', compact('jenis'));
-
-        return $pdf->download('Data Jenis Alat.pdf');
     }
 }

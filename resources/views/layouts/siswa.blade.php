@@ -258,7 +258,7 @@
                         </a>
                     </li>
                     <li class="dropdown">
-                        <a href="{{ route('peminjamanSiswa.index') }}" class="dropdown-toggle no-arrow">
+                       <a href="{{ route('peminjamanSiswa.index') }}" class="dropdown-toggle no-arrow">
                             <span class="micon bi bi-file-earmark-post"></span><span class="mtext">Peminjaman</span>
                         </a>
                     </li>
@@ -278,8 +278,7 @@
     <div class="main-container">
         @yield('content')
     </div>
-
-    <!-- js -->
+    @yield('modal')
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
     <script src="{{ asset('deskap/vendors/scripts/core.js') }}"></script>
@@ -291,11 +290,6 @@
     <script src="{{ asset('deskap/src/plugins/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('deskap/src/plugins/datatables/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('deskap/src/plugins/datatables/js/responsive.bootstrap4.min.js') }}"></script>
-
-    <!-- Datatable Setting js -->
-    {{-- <script src="{{ asset('deskap/vendors/scripts/datatable-setting.js') }}"></script>
-    <script src="{{ asset('deskap/vendors/scripts/dashboard3.js') }}"></script> --}}
-    <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS" height="0" width="0"
             style="display: none; visibility: hidden"></iframe></noscript>
     <script>
@@ -309,80 +303,83 @@
 
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
-        messaging.onMessage((payload) => {
-            console.log("🔥 FOREGROUND MESSAGE:", payload);
+        $(document).ready(function() {
 
-            if (Notification.permission === "granted") {
-                new Notification(payload.notification.title, {
-                    body: payload.notification.body
-                });
-            }
-        });
-    </script>
-    {{-- <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDrfnmeCrRM4kSfKO6UYgd4rYs_AN3K4WU",
-            authDomain: "peminjaman-8a8d0.firebaseapp.com",
-            projectId: "peminjaman-8a8d0",
-            messagingSenderId: "114150558143",
-            appId: "1:114150558143:web:a709540146fe7a0247b90a",
-        };
+            if ('serviceWorker' in navigator) {
 
-        firebase.initializeApp(firebaseConfig);
-        const messaging = firebase.messaging();
-        messaging.onMessage((payload) => {
-            console.log("🔥 FOREGROUND MESSAGE:", payload);
+                navigator.serviceWorker
+                    .register('/firebase-messaging-sw.js')
+                    .then(async (registration) => {
 
-            new Notification(payload.notification.title, {
-                body: payload.notification.body
-            });
-        });
+                        const permission =
+                            await Notification.requestPermission();
 
-        // 🔥 REGISTER SERVICE WORKER + AMBIL TOKEN
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                .then(function(registration) {
+                        if (permission !== "granted") {
+                            console.log("Permission ditolak");
+                            return;
+                        }
 
-                    Notification.requestPermission().then(() => {
-                            return messaging.getToken({
+                        const token =
+                            await messaging.getToken({
                                 vapidKey: 'BBmW3STkh775-ucf4qPMjejnfY53u0IT18CEXL0puloM3ACQ0zD4sYpvP_4V_klPPgIOSbwCusefroph47RXx-k',
                                 serviceWorkerRegistration: registration
                             });
-                        }).then(token => {
 
-                            if (!token) {
-                                console.log("Token kosong");
-                                return;
-                            }
+                        if (!token) {
+                            console.log("Token kosong");
+                            return;
+                        }
 
-                            console.log("TOKEN:", token);
+                        console.log("TOKEN:", token);
 
-                            return fetch('/save-token', {
-                                method: 'POST',
-                                credentials: 'same-origin', // 🔥 TAMBAH INI (PENTING)
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json', // 🔥 TAMBAH INI (PENTING)
-                                    'X-CSRF-TOKEN': document
-                                        .querySelector('meta[name="csrf-token"]')
-                                        .getAttribute('content')
-                                },
-                                body: JSON.stringify({
-                                    token: token
-                                })
-                            });
+                        await fetch('/save-token', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document
+                                    .querySelector(
+                                        'meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                token
+                            })
+                        });
 
-                        }).then(res => res.json())
-                        .then(data => {
-                            console.log("Token berhasil disimpan", data);
-                        })
-                        .catch(err => console.log("ERROR:", err));
+                    })
+                    .catch(console.error);
+                console.log("SCRIPT FIREBASE LOADED");
+                messaging.onMessage(function(payload) {
+                    console.log("FOREGROUND MESSAGE", payload);
 
+                    const title = payload.notification?.title;
+                    const body = payload.notification?.body;
+
+                    toastr.info(body, title, {
+                        timeOut: 5000,
+                        progressBar: true,
+                        closeButton: true
+                    });
                 });
-        }
-    </script> --}}
-    <!-- End Google Tag Manager (noscript) -->
-    @yield('modal')
+            }
+
+            
+        });
+
+        // console.log("SCRIPT FIREBASE LOADED");
+        // messaging.onMessage(function(payload) {
+        //     console.log("FOREGROUND MESSAGE", payload);
+
+        //     const title = payload.data.title;
+        //     const body = payload.data.body;
+
+        //     toastr.info(body, title, {
+        //         timeOut: 5000,
+        //         progressBar: true,
+        //         closeButton: true
+        //     });
+        // });
+    </script>
     @stack('scripts')
 </body>
 

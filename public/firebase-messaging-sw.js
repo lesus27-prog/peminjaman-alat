@@ -10,14 +10,36 @@ firebase.initializeApp({
     messagingSenderId: "114150558143",
     appId: "1:114150558143:web:a709540146fe7a0247b90a",
 });
-
 const messaging = firebase.messaging();
 
-messaging.setBackgroundMessageHandler(function (payload) {
-    const title = payload.notification?.title || "Notifikasi";
-    const options = {
-        body: payload.notification?.body || "",
-    };
+// const messaging = firebase.messaging();
 
-    return self.registration.showNotification(title, options);
-});
+// messaging.onBackgroundMessage(function (payload) {
+//     const title = payload.notification?.title;
+
+//     const body = payload.notification?.body;
+
+//     self.registration.showNotification(title, {
+//         body: body
+//     });
+// });
+
+// messaging.onBackgroundMessage(function (payload) {
+//     console.log("BG MESSAGE", payload);
+
+//     const title = payload.notification?.title || "Notifikasi";
+//     const options = {
+//         body: payload.notification?.body || "",
+//     };
+
+//     self.registration.showNotification(title, options);
+// });
+
+// messaging.setBackgroundMessageHandler(function (payload) {
+//     const title = payload.notification?.title || "Notifikasi";
+//     const options = {
+//         body: payload.notification?.body || "",
+//     };
+
+//     return self.registration.showNotification(title, options);
+// });

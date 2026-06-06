@@ -29,7 +29,7 @@ $(document).ready(function () {
         if (stok !== "" && stokAngka === 0) {
             $("#error-stok")
                 .removeClass("d-none")
-                .text("Stok tidak boleh 0");
+                .text("Stok minimal 1!");
 
             $btnSubmit.prop("disabled", true);
             return false;
@@ -89,7 +89,7 @@ $(document).ready(function () {
 
                     if (res.exist) {
                         namaTipeValid = false;
-                        setError("Nama tipe sudah digunakan");
+                        setError("Nama tipe sudah digunakan!");
                     } else {
                         namaTipeValid = true;
                         clearError();

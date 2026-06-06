@@ -1,6 +1,5 @@
 let scanner;
 let scanAktif = false;
-let lastScan = null;
 let scanLock = false;
 
 let successSound = new Audio(successSoundPath);
@@ -18,22 +17,10 @@ if (kodeAlat) {
     }, 500);
 }
 
-$(document).ready(function () {
-    updateProgress();
-
-    scanner = new Html5Qrcode("reader");
-
-    startScanner();
-});
-
 function onScanSuccess(decodedText) {
     if (scanLock) return;
 
-    // if (lastScan === decodedText) return;
-
     scanLock = true;
-
-    // lastScan = decodedText;
 
     let kodeAlat = decodedText.split("/").pop();
 
@@ -45,26 +32,18 @@ function onScanSuccess(decodedText) {
 
     setTimeout(function () {
         scanLock = false;
-
-        // lastScan = null;
     }, 1500);
 }
 
 function startScanner() {
     scanner
         .start(
-            {
-                facingMode: "environment",
-            },
+            { facingMode: "environment" },
             {
                 fps: 15,
                 qrbox: function (w, h) {
-                    let size = Math.min(w, h) * 0.8;
-
-                    return {
-                        width: size,
-                        height: size,
-                    };
+                    let size = Math.min(w, h) * 0.9;
+                    return { width: size, height: size };
                 },
             },
             onScanSuccess,
@@ -73,12 +52,9 @@ function startScanner() {
             scanAktif = true;
 
             $("#btnScan")
-                .html('<i class="bi bi-camera-video-fill"></i> Stop Scan')
+                .html('<i class="bi bi-camera-video-off-fill"></i> Stop Scan')
                 .removeClass("btn-success")
                 .addClass("btn-danger");
-        })
-        .catch(function (err) {
-            console.error(err);
         });
 }
 
@@ -88,14 +64,29 @@ function toggleScanner() {
             scanAktif = false;
 
             $("#btnScan")
-                .html('<i class="bi bi-camera-video-off-fill"></i> Mulai Scan')
+                .html('<i class="bi bi-camera-video-fill"></i> Mulai Scan')
                 .removeClass("btn-danger")
                 .addClass("btn-success");
+
+            $("#emptyScanState").show();
+            $("#reader").hide();
         });
     } else {
+        $("#emptyScanState").hide();
+        $("#reader").show();
+
         startScanner();
     }
 }
+
+$(document).ready(function () {
+    updateProgress();
+
+    scanner = new Html5Qrcode("reader");
+
+    $("#emptyScanState").show();
+    $("#reader").hide();
+});
 
 function renderKode(tipe, kodeAlat) {
     let container = $('.alat-checkpoint[data-tipe="' + tipe + '"]')
@@ -103,15 +94,14 @@ function renderKode(tipe, kodeAlat) {
         .find(".codes");
 
     container.append(`
-                <span class="code">
-                    ${kodeAlat}
-                    <i class="bi bi-trash-fill code-trash"></i>
-                </span>
-            `);
+        <span class="code">
+            ${kodeAlat}
+            <i class="bi bi-trash-fill code-trash"></i>
+        </span>
+    `);
 }
 
 let dataScan = {};
-
 let batasTipe = {};
 
 daftarPeminjaman.forEach(function (item) {
@@ -185,7 +175,6 @@ function addAlat(kodeAlat) {
             title: "Peringatan",
             text: "Jumlah alat untuk tipe ini sudah penuh",
         });
-        // toastr.warning('Jumlah alat untuk tipe ini sudah penuh');
 
         return;
     }

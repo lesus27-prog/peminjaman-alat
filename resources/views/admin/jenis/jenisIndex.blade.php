@@ -1,17 +1,16 @@
 @extends('layouts.admin')
 @section('title', 'Data Jenis Alat')
 @section('link')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/content.css') }}">
     <link rel="stylesheet" href="{{ asset('css/universal.css') }}">
     <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/content.css') }}">
     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
     <link rel="stylesheet" href="{{ asset('css/button.css') }}">
 @endsection
-
 @section('content')
     <div class="pd-ltr-20 xs-pd-20-10">
         <div class="min-height-200px">
@@ -36,8 +35,9 @@
                         </nav>
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
-                        <button class="btn btn-universal btn-add" type="button"><i class="fa fa-plus"></i></i>Add
-                            New</button></a>
+                        <button class="btn btn-universal btn-add" type="button">
+                            <i class="fa fa-plus"></i></i>Add New
+                        </button>
                     </div>
                 </div>
             </div>
@@ -48,15 +48,11 @@
                         <input type="text" class="form-control search-box-wrapper" placeholder="Search..."
                             id="searchInput">
                     </div>
-                    <button onclick="exportPdf()" type="button" class="btn-universal" title="Download">
-                        <i class="fa fa-download"></i>
-                        Export
-                    </button>
                 </div>
                 <div id="show-entries" class="ml-0 mt-3"></div>
                 <div class="pb-20">
                     <div class="table-responsive p-0 m-0">
-                        <table class="data-table table hover multiple-select-row py-3 px-4 border-0"
+                        <table class="data-table table hover table-hover multiple-select-row py-3 px-4 border-0"
                             style="background: #e9edf9b1 !important; border-radius: 22px;">
                             <thead>
                                 <tr>
@@ -78,24 +74,18 @@
                                         <td>{{ $jenis->tipeAlat->sum('stok') }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-
-                                                <!-- EDIT -->
                                                 <button type="button" class="btn btn-icon btn-edit"
                                                     data-id-jenis="{{ $jenis->id_jenis }}"
                                                     data-nama-jenis="{{ ucwords($jenis->nama_jenis) }}" title="Edit">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
-
-                                                <!-- DELETE -->
                                                 <button type="button" class="btn btn-icon btn-delete"
                                                     data-id-jenis="{{ $jenis->id_jenis }}"
                                                     data-nama-jenis="{{ ucwords($jenis->nama_jenis) }}" title="Delete">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
-
                                             </div>
                                         </td>
-
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -127,16 +117,14 @@
                                         placeholder="Masukkan Nama Jenis">
                                     <small id="error-jenis" class="text-danger d-none ml-1"></small>
                                 </div>
-
                             </div>
-
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-back" data-dismiss="modal"> <i
-                                class="fa-solid fa-circle-xmark"></i>Batal</button>
+                    <div class="footer modal-footer">
+                        <button type="button" class="btn btn-back" data-dismiss="modal"><i
+                                class="fa-solid fa-arrow-left"></i>Batal</button>
                         <button type="submit" class="btn btn-universal" id="btn-submit"> <i
-                                class="fa-solid fa-check"></i>Simpan</button>
+                                class="fa fa-paper-plane"></i>Simpan</button>
                     </div>
                 </form>
             </div>
@@ -167,12 +155,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-back" data-dismiss="modal"><i
-                                    class="fa-solid fa-circle-xmark"></i>Batal</button>
-                            <button type="submit" class="btn btn-universal" id="btn-edit-submit"><i
-                                    class="fa-solid fa-floppy-disk"></i>Simpan Perubahan</button>
-                        </div>
+                    </div>
+                    <div class="footer modal-footer pt-0">
+                        <button type="button" class="btn btn-back" data-dismiss="modal">
+                            <i class="fa-solid fa-arrow-left"></i> Batal
+                        </button>
+                        <button type="submit" class="btn btn-universal" id="btn-edit">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                        </button>
                     </div>
                 </form>
             </div>
@@ -208,233 +198,112 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{ asset('deskap/src/plugins/sweetalert2/sweetalert2.all.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="{{ asset('js/dataTable.js') }}"></script>
     <script src="{{ asset('js/dataJenis.js') }}"></script>
     <script>
-        // $(document).ready(function() {
-        //     // ===================== ADD =====================
-        //     $(document).on('click', '.btn-add', function(e) {
-        //         e.preventDefault();
-        //         $('#modal-add-data-jenis').modal('show');
-        //     });
+        $(document).ready(function() {
+            @if (session('store_success'))
+                $('#store-success-text').html(
+                    'Data jenis alat dengan nama <strong>{{ session('store_success') }}</strong> berhasil disimpan'
+                );
 
-        //     // reset form saat modal close
-        //     $('#modal-add-data-jenis').on('hidden.bs.modal', function() {
-        //         $(this).find('form')[0].reset();
-        //     });
+                $('#store-success').modal('show');
 
-        //     // ===================== EDIT =====================
-        //     $(document).on('click', '.btn-edit', function(e) {
-        //         e.preventDefault();
+                setTimeout(function() {
+                    $('#store-success').modal('hide');
+                }, 3000);
+            @endif
 
-        //         let idJenis = $(this).data('id-jenis');
-        //         let namaJenis = $(this).data('nama-jenis');
+            @if (session('store_error'))
+                toastr.error("{{ session('store_error') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
+                    progressBar: true,
+                    closeButton: true
+                });
+            @endif
 
-        //         $('#id-jenis').val(idJenis);
-        //         $('#nama-jenis').val(namaJenis);
-        //         $('#modal-edit-data-jenis').modal('show');
+            @if (session('update_success'))
+                $('#update-success-text').html(
+                    'Data jenis alat dengan nama <strong>{{ session('update_success') }}</strong> berhasil di update'
+                );
 
-        //         $('#edit-jenis-form').attr('action', '/update-jenis/' + idJenis);
-        //     });
+                $('#update-success').modal('show');
 
-        //     // ===================== DELETE =====================
-        //     $(document).on('click', '.btn-delete', function(e) {
-        //         e.preventDefault();
+                setTimeout(function() {
+                    $('#update-success').modal('hide');
+                }, 3000);
+            @endif
 
-        //         let idJenis = $(this).data('id-jenis');
-        //         let namaJenis = $(this).data('nama-jenis');
+            @if (session('update_error'))
+                toastr.error("{{ session('update_error') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
+                    progressBar: true,
+                    closeButton: true
+                });
+            @endif
 
-        //         Swal.fire({
-        //             title: 'Yakin?',
-        //             html: "Anda ingin menghapus <strong>" + namaJenis + "</strong>?",
-        //             icon: 'warning',
-        //             showCancelButton: true,
-        //             confirmButtonText: 'Ya, hapus!',
-        //             cancelButtonText: 'Batal',
-        //             customClass: {
-        //                 confirmButton: 'btn btn-success margin-5',
-        //                 cancelButton: 'btn btn-danger margin-5'
-        //             },
-        //             buttonsStyling: false
-        //         }).then((result) => {
-        //             if (result.isConfirmed) {
+            $(document).on("click", ".btn-delete", function(e) {
+                e.preventDefault();
+                let idJenis = $(this).data("id-jenis");
+                let namaJenis = $(this).data("nama-jenis");
 
-        //                 Swal.fire({
-        //                     title: 'Deleted!',
-        //                     html: "Jenis <strong>" + namaJenis +
-        //                         "</strong> berhasil dihapus.",
-        //                     icon: 'success',
-        //                     timer: 3000,
-        //                     showConfirmButton: false
-        //                 });
+                Swal.fire({
+                    title: "Yakin?",
+                    html: "Anda ingin menghapus <strong>" + namaJenis + "</strong>?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, hapus!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-success margin-5",
+                        cancelButton: "btn btn-danger margin-5",
+                    },
+                    buttonsStyling: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let form = $("<form>", {
+                            method: "POST",
+                            action: "/delete-jenis/" + idJenis,
+                        });
 
-        //                 // submit delete form
-        //                 let form = $('<form>', {
-        //                     method: 'POST',
-        //                     action: '/delete-jenis/' + idJenis
-        //                 });
+                        let token = $("<input>", {
+                            type: "hidden",
+                            name: "_token",
+                            value: "{{ csrf_token() }}",
+                        });
 
-        //                 let token = $('<input>', {
-        //                     type: 'hidden',
-        //                     name: '_token',
-        //                     value: '{{ csrf_token() }}'
-        //                 });
+                        let method = $("<input>", {
+                            type: "hidden",
+                            name: "_method",
+                            value: "DELETE",
+                        });
 
-        //                 let method = $('<input>', {
-        //                     type: 'hidden',
-        //                     name: '_method',
-        //                     value: 'DELETE'
-        //                 });
-
-        //                 form.append(token, method).appendTo('body').submit();
-        //             }
-        //         });
-        //     });
-
-        //     // ===================== DATATABLE =====================
-        //     if (!$.fn.DataTable.isDataTable('.data-table')) {
-
-        //         var table = $('.data-table').DataTable({
-        //             responsive: false,
-        //             autoWidth: false,
-        //             pageLength: 10,
-        //             lengthChange: true,
-        //             ordering: false,
-        //             dom: 'lrtip',
-
-        //             language: {
-        //                 search: "",
-        //                 zeroRecords: "Data tidak ditemukan",
-        //                 info: "Showing _START_ to _END_ of _TOTAL_ entries",
-        //                 lengthMenu: "_MENU_",
-        //                 paginate: {
-        //                     next: ">>",
-        //                     previous: "<<"
-        //                 }
-        //             }
-        //         });
-
-        //         $('#show-entries')
-        //             .html($('.dataTables_length').detach())
-        //             .prepend('<span class="my-1">Show :</span>');
-        //     }
-
-        //     // ===================== SEARCH =====================
-        //     let timeout;
-
-        //     $('#searchInput').on('input', function() {
-        //         clearTimeout(timeout);
-        //         timeout = setTimeout(() => {
-        //             table.search(this.value).draw();
-        //         }, 300);
-        //     });
-
-        //     // ===================== TOOLTIP =====================
-        //     $(function() {
-        //         $('[title]').tooltip({
-        //             placement: 'top',
-        //             offset: '0,3'
-        //         });
-        //     });
-
-        //     // ========================= EXPORT =========================
-        //     window.exportPdf = function() {
-        //         let url = "/export-jenis";
-        //         window.open(url, "_blank");
-        //     };
-
-        // });
-    </script>
-@endpush
-@push('scripts')
-    <script>
-
-        $(document).on("click", ".btn-delete", function(e) {
-            e.preventDefault();
-
-            let idJenis = $(this).data("id-jenis");
-            let namaJenis = $(this).data("nama-jenis");
-
-            Swal.fire({
-                title: "Yakin?",
-                html: "Anda ingin menghapus <strong>" + namaJenis + "</strong>?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Ya, hapus!",
-                cancelButtonText: "Batal",
-                customClass: {
-                    confirmButton: "btn btn-success margin-5",
-                    cancelButton: "btn btn-danger margin-5",
-                },
-                buttonsStyling: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: "Deleted!",
-                        html: "Jenis <strong>" +
-                            namaJenis +
-                            "</strong> berhasil dihapus.",
-                        icon: "success",
-                        timer: 3000,
-                        showConfirmButton: false,
-                    });
-
-                    // submit delete form
-                    let form = $("<form>", {
-                        method: "POST",
-                        action: "/delete-jenis/" + idJenis,
-                    });
-
-                    let token = $("<input>", {
-                        type: "hidden",
-                        name: "_token",
-                        value: "{{ csrf_token() }}",
-                    });
-
-                    let method = $("<input>", {
-                        type: "hidden",
-                        name: "_method",
-                        value: "DELETE",
-                    });
-
-                    form.append(token, method).appendTo("body").submit();
-                }
+                        form.append(token, method).appendTo("body").submit();
+                    }
+                });
             });
+
+            @if (session('delete_success'))
+                Swal.fire({
+                    title: "Deleted!",
+                    html: "Data jenis alat dengan nama <strong>{{ session('delete_success') }}</strong> berhasil dihapus",
+                    icon: "success",
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            @endif
+
+            @if (session('delete_error'))
+                Swal.fire({
+                    title: "Gagal!",
+                    text: "{{ session('delete_error') }}",
+                    icon: "error",
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            @endif
         });
-
-        @if (session('update_success'))
-            $('#update-success-text').html(
-                'Data jenis alat dengan nama <strong>{{ session('update_success') }}</strong> berhasil di update'
-            );
-
-            $('#update-success').modal('show');
-
-            setTimeout(function() {
-                $('#update-success').modal('hide');
-            }, 3000);
-        @endif
-
-        @if (session('store_success'))
-
-            $('#store-success-text').html(
-                'Data jenis alat dengan nama <strong>{{ session('store_success') }}</strong> berhasil disimpan'
-            );
-
-            $('#store-success').modal('show');
-
-            setTimeout(function() {
-                $('#store-success').modal('hide');
-            }, 3000);
-        @endif
-
-        @if ($errors->has('nama_jenis'))
-            toastr.error(
-                'Nama jenis sudah digunakan',
-                'Gagal'
-            );
-        @endif
     </script>
 @endpush

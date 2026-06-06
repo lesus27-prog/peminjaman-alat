@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 @section('title', 'Data Siswa')
 @section('link')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/universal.css') }}">
     <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
     <link rel="stylesheet" href="{{ asset('css/button.css') }}">
 @endsection
-
 @section('content')
     <div class="pd-ltr-20 xs-pd-20-10">
         <div class="min-height-200px">
@@ -36,12 +35,19 @@
                         </nav>
                     </div>
                     <div class="col-md-6 col-sm-12 text-right">
-                        <a href="{{ route('siswa.add') }}">
-                            <button class="btn btn-universal" type="button" title="Tambah">
-                                <i class="fa fa-plus"></i>
-                                Add New
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <button class="btn btn-universal btn-new-year w-100 mb-2" type="button"
+                                title="Tahun Ajaran Baru">
+                                <i class="fa fa-refresh"></i>
+                                Tahun Ajaran Baru
                             </button>
-                        </a>
+                            <a href="{{ route('siswa.add') }}" class="w-100">
+                                <button class="btn btn-universal w-100" type="button" title="Tambah">
+                                    <i class="fa fa-plus"></i>
+                                    Add New
+                                </button>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,8 +67,7 @@
                             <i class="fa fa-download"></i>
                             Export
                         </button>
-
-                        <button type="button" class="btn-universal ml-3" data-toggle="modal"
+                        <button type="button" class="btn-universal ml-3 btn-import" data-toggle="modal"
                             data-target="#modal-import-data-siswa" title="Upload">
                             <i class="fa fa-upload"></i>
                             Import
@@ -72,7 +77,7 @@
                 <div id="show-entries" class="ml-0 mt-3"></div>
                 <div class="pb-20">
                     <div class="table-responsive p-0 m-0">
-                        <table class="data-table table hover multiple-select-row py-3 px-4 border-0"
+                        <table class="data-table table hover table-hover multiple-select-row py-3 px-4 border-0"
                             style="background: #e9edf9b1 !important; border-radius: 22px;">
                             <thead>
                                 <tr>
@@ -81,6 +86,7 @@
                                     <th>Nomor Induk Siswa</th>
                                     <th>Kelas</th>
                                     <th>Jenis Kelamin</th>
+                                    <th>Tahun Masuk</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -94,13 +100,15 @@
                                         <td>{{ $siswa->nis }}</td>
                                         <td>{{ strtoupper($siswa->kelas) }}</td>
                                         <td>{{ ucwords($siswa->jenis_kelamin) }}</td>
+                                        <td>{{ $siswa->tahun_masuk }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 <button type="button" class="btn btn-icon btn-edit"
                                                     data-id-siswa="{{ $siswa->id_siswa }}"
                                                     data-nama-siswa="{{ ucwords($siswa->nama_siswa) }}"
                                                     data-nis="{{ $siswa->nis }}" data-kelas="{{ $siswa->kelas }}"
-                                                    data-jenis-kelamin="{{ $siswa->jenis_kelamin }}" title="Edit">
+                                                    data-jenis-kelamin="{{ $siswa->jenis_kelamin }}"
+                                                    data-tahun-masuk="{{ $siswa->tahun_masuk }}" title="Edit">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-icon btn-delete"
@@ -119,7 +127,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 @section('modal')
     <div class="modal fade" id="filterModal" tabindex="-1">
@@ -141,25 +148,21 @@
                             <option value="">All Kelas</option>
                             <option value="x tkj 1">X TKJ 1</option>
                             <option value="x tkj 2">X TKJ 2</option>
-                            <option value="x tkj 3">X TKJ 3</option>
-                            <option value="x tkj 4">X TKJ 4</option>
-                            <option value="x tkj 5">X TKJ 5</option>
-                            <option value="x tkj 6">X TKJ 6</option>
-                            {{-- @foreach ($siswas->unique('kelas') as $siswa)
-                                <option value="{{ $siswa->kelas }}">
-                                    {{ $siswa->kelas }}
-                                </option>
-                            @endforeach --}}
+                            <option value="xi tkj 1">XI TKJ 1</option>
+                            <option value="xi tkj 2">XI TKJ 2</option>
+                            <option value="xii tkj 1">XII TKJ 1</option>
+                            <option value="xii tkj 2">XII TKJ 2</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer justify-content-between">
+                <div class=" footer modal-footer justify-content-between">
                     <button class="btn btn-light btn-back"><i class="bi bi-arrow-counterclockwise"></i>Reset</button>
                     <button class="btn btn-primary btn-universal"><i class="bi bi-check2-circle"></i>Terapkan</button>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="modal fade modal-edit" id="modal-edit-data-siswa" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -176,7 +179,7 @@
                         <div class="card-modal-edit">
                             <input type="hidden" id="id-siswa" name="id_siswa">
                             <div class="form-group row align-items-center">
-                                <label for="nama_siswa" class="col-md-3 col-form-label">Nama Siswa</label>
+                                <label for="nama-siswa" class="col-md-3 col-form-label">Nama Siswa</label>
                                 <div class="col-md-9 position-relative">
                                     <input type="text" class="form-control" id="nama-siswa" name="nama_siswa"
                                         placeholder="Masukkan Nama Siswa" required>
@@ -197,15 +200,15 @@
                                         <option value="" disabled>--Pilih--</option>
                                         <option value="x tkj 1">X TKJ 1</option>
                                         <option value="x tkj 2">X TKJ 2</option>
-                                        <option value="x tkj 3">X TKJ 3</option>
-                                        <option value="x tkj 4">X TKJ 4</option>
-                                        <option value="x tkj 5">X TKJ 5</option>
-                                        <option value="x tkj 6">X TKJ 6</option>
+                                        <option value="xi tkj 1">XI TKJ 1</option>
+                                        <option value="xi tkj 2">XI TKJ 2</option>
+                                        <option value="xii tkj 1">XII TKJ 1</option>
+                                        <option value="xii tkj 2">XII TKJ 2</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row align-items-center">
-                                <label for="jenis_kelamin" class="col-md-3 col-form-label">Jenis Kelamin</label>
+                                <label for="jenis-kelamin" class="col-md-3 col-form-label">Jenis Kelamin</label>
                                 <div class="col-md-9 position-relative">
                                     <select id="jenis-kelamin" name="jenis_kelamin" class="form-control" required>
                                         <option value="" disabled>--Pilih--</option>
@@ -214,11 +217,25 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group row align-items-center">
+                                <label for="tahun-masuk" class="col-md-3 col-form-label">Tahun Masuk</label>
+                                <div class="col-md-9 position-relative">
+                                    <select id="tahun-masuk" name="tahun_masuk" class="form-control" required>
+                                        <option value="" disabled>--Pilih--</option>
+                                        @php
+                                            $tahunSekarang = date('Y');
+                                        @endphp
+                                        @for ($i = $tahunSekarang; $i >= $tahunSekarang - 3; $i--)
+                                            <option value="{{ $i }}">{{ $i }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer pt-0">
+                    <div class="footer modal-footer pt-0">
                         <button type="button" class="btn btn-back" data-dismiss="modal">
-                            <i class="fa-solid fa-circle-xmark"></i> Batal
+                            <i class="fa-solid fa-arrow-left"></i> Batal
                         </button>
                         <button type="submit" class="btn btn-universal" id="btn-edit">
                             <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
@@ -247,30 +264,17 @@
                         </div>
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle me-2"></i>
-                            <strong>Format File:</strong> Nama, Nis, Kelas, Jenis Kelamin<br>
-                            <small>Contoh: Ryan, 1234, X TKJ 1, Laki-Laki</small>
+                            <strong>Format File:</strong> Nama, Nis, Kelas, Jenis Kelamin, Tahun Masuk<br>
+                            <small>Contoh: Ryan, 1234, X TKJ 1, Laki-Laki, 2026</small>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-back" data-dismiss="modal"> <i
-                                class="fa-solid fa-circle-xmark"></i>Batal</button>
-                        <button type="submit" class="btn btn-universal"><i class="fa-solid fa-check"></i>Submit</button>
+                                class="fa-solid fa-arrow-left"></i>Batal</button>
+                        <button type="submit" class="btn btn-universal"> <i
+                                class="fa-solid fa-paper-plane"></i>Submit</button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="update-success" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content text-center p-4">
-                <div class="modal-body font-18">
-                    <h3 class="mb-20">Update Berhasil!</h3>
-                    <div class="mb-30">
-                        <img src="{{ asset('deskap/vendors/images/success.png') }}" alt="success" />
-                    </div>
-                    <p id="update-success-text"></p>
-                </div>
             </div>
         </div>
     </div>
@@ -288,321 +292,255 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="upload-success" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body font-18">
+                    <h3 class="mb-20">Berhasil!</h3>
+                    <div class="mb-30">
+                        <img src="{{ asset('deskap/vendors/images/success.png') }}" alt="success" />
+                    </div>
+                    <p id="upload-success-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="update-success" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body font-18">
+                    <h3 class="mb-20">Update Berhasil!</h3>
+                    <div class="mb-30">
+                        <img src="{{ asset('deskap/vendors/images/success.png') }}" alt="success" />
+                    </div>
+                    <p id="update-success-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('scripts')
-    <script src="{{ asset('deskap/src/plugins/sweetalert2/sweetalert2.all.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/dataTable.js') }}"></script>
     <script src="{{ asset('js/dataSiswa.js') }}"></script>
-@endpush
-@push('scripts')
     <script>
-        $(document).on("click", ".btn-delete", function(e) {
-            e.preventDefault();
+        $(document).ready(function() {
+            @if (session('store_success'))
+                $('#store-success-text').html(
+                    'Data siswa dengan nama <strong>{{ session('store_success') }}</strong> berhasil disimpan'
+                );
 
-            let idSiswa = $(this).data("id-siswa");
-            let namaSiswa = $(this).data("nama-siswa");
+                $('#store-success').modal('show');
 
-            Swal.fire({
-                title: "Yakin?",
-                html: "Anda ingin menghapus <strong>" + namaSiswa + "</strong>?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Ya, hapus!",
-                cancelButtonText: "Batal",
-                customClass: {
-                    confirmButton: "btn btn-success margin-5",
-                    cancelButton: "btn btn-danger margin-5",
-                },
-                buttonsStyling: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: "Deleted!",
-                        html: "Siswa <strong>" +
-                            namaSiswa +
-                            "</strong> berhasil dihapus.",
-                        icon: "success",
-                        timer: 3000,
-                        showConfirmButton: false,
-                    });
+                setTimeout(function() {
+                    $('#store-success').modal('hide');
+                }, 3000);
+            @endif
 
-                    let form = $("<form>", {
-                        method: "POST",
-                        action: "/delete-siswa/" + idSiswa,
-                    });
+            @if (session('upload_success'))
+                $('#upload-success-text').html("{{ session('upload_success') }}");
 
-                    let token = $("<input>", {
-                        type: "hidden",
-                        name: "_token",
-                        value: "{{ csrf_token() }}",
-                    });
+                $('#upload-success').modal('show');
 
-                    let method = $("<input>", {
-                        type: "hidden",
-                        name: "_method",
-                        value: "DELETE",
-                    });
+                setTimeout(function() {
+                    $('#upload-success').modal('hide');
+                }, 3000);
+            @endif
 
-                    form.append(token, method).appendTo("body").submit();
-                }
-            });
-        });
+            @if (session('upload_error'))
+                toastr.error("{{ session('upload_error') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
+                    progressBar: true,
+                    closeButton: true
+                });
+            @endif
 
-        let timer;
-        let nisAwal = '';
+            @if (session('update_success'))
+                $('#update-success-text').html(
+                    'Data siswa dengan nama <strong>{{ session('update_success') }}</strong> berhasil di update'
+                );
 
-        $('#nis').on('input', function() {
+                $('#update-success').modal('show');
 
-            clearTimeout(timer);
+                setTimeout(function() {
+                    $('#update-success').modal('hide');
+                }, 3000);
+            @endif
 
-            let nis = $(this).val().trim();
-            let id = $('#id-siswa').val();
+            @if (session('update_error'))
+                toastr.error("{{ session('update_error') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
+                    progressBar: true,
+                    closeButton: true
+                });
+            @endif
 
-            $('#error-nis').addClass('d-none').text('');
+            $(document).on("click", ".btn-delete", function(e) {
+                e.preventDefault();
 
-            // default: aktifkan tombol dulu
-            $('#btn-edit').prop('disabled', false);
+                let idSiswa = $(this).data("id-siswa");
+                let namaSiswa = $(this).data("nama-siswa");
 
-            // kalau kosong atau sama dengan NIS awal → aman
-            if (nis === '' || nis === nisAwal) return;
-
-            timer = setTimeout(function() {
-
-                $.ajax({
-                    url: '/siswa/check-nis',
-                    method: 'POST',
-                    data: {
-                        nis: nis,
-                        id_siswa: id,
-                        _token: '{{ csrf_token() }}'
+                Swal.fire({
+                    title: "Yakin?",
+                    html: "Anda ingin menghapus <strong>" + namaSiswa + "</strong>?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, hapus!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-success margin-5",
+                        cancelButton: "btn btn-danger margin-5",
                     },
-                    success: function(res) {
+                    buttonsStyling: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let form = $("<form>", {
+                            method: "POST",
+                            action: "/delete-siswa/" + idSiswa,
+                        });
 
-                        if (res.exist) {
-                            $('#error-nis')
-                                .removeClass('d-none')
-                                .text('NIS sudah digunakan');
+                        let token = $("<input>", {
+                            type: "hidden",
+                            name: "_token",
+                            value: "{{ csrf_token() }}",
+                        });
 
-                            $('#btn-edit').prop('disabled', true);
-                        } else {
-                            $('#error-nis').addClass('d-none').text('');
-                            $('#btn-edit').prop('disabled', false);
-                        }
+                        let method = $("<input>", {
+                            type: "hidden",
+                            name: "_method",
+                            value: "DELETE",
+                        });
+
+                        form.append(token, method).appendTo("body").submit();
                     }
                 });
-
-            }, 400);
-        });
-
-        @if (session('update_success'))
-            $('#update-success-text').html(
-                'Data siswa dengan nama <strong>{{ session('update_success') }}</strong> berhasil di update'
-            );
-
-            $('#update-success').modal('show');
-
-            setTimeout(function() {
-                $('#update-success').modal('hide');
-            }, 3000);
-        @endif
-
-        @if (session('store_success'))
-            $('#store-success-text').html(
-                'Data siswa dengan nama <strong>{{ session('store_success') }}</strong> berhasil disimpan'
-            );
-
-            $('#store-success').modal('show');
-
-            setTimeout(function() {
-                $('#store-success').modal('hide');
-            }, 3000);
-        @endif
-
-        @if (session('upload_success'))
-            toastr.success("{{ session('upload_success') }}", "Upload Berhasil", {
-                timeOut: 3000,
-                progressBar: true,
-                closeButton: true
             });
-        @endif
+
+            @if (session('delete_success'))
+                Swal.fire({
+                    title: "Deleted!",
+                    html: "Data siswa dengan nama <strong>{{ session('delete_success') }}</strong> berhasil dihapus",
+                    icon: "success",
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            @endif
+
+            @if (session('delete_error'))
+                Swal.fire({
+                    title: "Gagal!",
+                    text: "{{ session('delete_error') }}",
+                    icon: "error",
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            @endif
+
+            $(document).on("click", ".btn-new-year", function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: "Tahun Ajaran Baru?",
+                    html: ` Data siswa akan diperbarui:
+                      <br><br>
+                      <b>X → XI</b><br>
+                      <b>XI → XII</b><br>
+                      <b>XII → Tidak Aktif</b>
+                    `,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, lanjutkan!",
+                    cancelButtonText: "Batal",
+                    customClass: {
+                        confirmButton: "btn btn-success margin-5",
+                        cancelButton: "btn btn-danger margin-5",
+                    },
+                    buttonsStyling: false,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let form = $("<form>", {
+                            method: "POST",
+                            action: "/tahun-ajaran-baru",
+                        });
+
+                        let token = $("<input>", {
+                            type: "hidden",
+                            name: "_token",
+                            value: "{{ csrf_token() }}",
+                        });
+
+                        form.append(token).appendTo("body").submit();
+                    }
+                });
+            });
+
+            @if (session('update_tab_success'))
+                Swal.fire({
+                    title: "Update Berhasil!",
+                    text: "{{ session('update_tab_success') }}",
+                    icon: "success",
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            @endif
+
+            @if (session('update_tab_error'))
+                Swal.fire({
+                    title: "Gagal!",
+                    text: "{{ session('update_tab_error') }}",
+                    icon: "error",
+                    timer: 3000,
+                    showConfirmButton: false,
+                });
+            @endif
+
+            let timer;
+            let nisAwal = '';
+
+            $('#nis').on('input', function() {
+
+                clearTimeout(timer);
+
+                let nis = $(this).val().trim();
+                let id = $('#id-siswa').val();
+
+                $('#error-nis').addClass('d-none').text('');
+
+                $('#btn-edit').prop('disabled', false);
+
+                // kalau kosong atau sama dengan NIS awal → aman
+                if (nis === '' || nis === nisAwal) return;
+
+                timer = setTimeout(function() {
+
+                    $.ajax({
+                        url: '/siswa/check-nis',
+                        method: 'POST',
+                        data: {
+                            nis: nis,
+                            id_siswa: id,
+                            _token: $('meta[name="csrf-token"]').attr("content")
+                        },
+                        success: function(res) {
+
+                            if (res.exist) {
+                                $('#error-nis')
+                                    .removeClass('d-none')
+                                    .text('NIS sudah digunakan');
+
+                                $('#btn-edit').prop('disabled', true);
+                            } else {
+                                $('#error-nis').addClass('d-none').text('');
+                                $('#btn-edit').prop('disabled', false);
+                            }
+                        }
+                    });
+
+                }, 400);
+            });
+        });
     </script>
 @endpush
-{{-- <script>
-    // $(document).ready(function() {
-    //     // ===================== FILTER =====================
-    //     let filterState = {
-    //         kelas: '',
-    //     };
-
-    //     function countActiveFilters() {
-    //         let count = 0;
-
-    //         if (filterState.kelas) count++;
-    //         return count;
-    //     }
-
-    //     $('.btn-universal').on('click', function() {
-
-    //         table.column(3).search(filterState.kelas).draw();
-    //         let total = countActiveFilters();
-
-    //         $('#filterBadge').text(total).toggle(total > 0);
-    //         $('#filterModal').modal('hide');
-    //     });
-
-
-    //     $('.btn-back').on('click', function() {
-
-    //         filterState = {
-    //             kelas: '',
-    //         };
-
-    //         $('select.filter-input').prop('selectedIndex', 0);
-    //         table.search('').columns().search('').draw();
-
-    //         $('#filterBadge').hide().text('0');
-    //     });
-
-    //     // ===================== SEARCH =====================
-    //     let timeout;
-
-    //     $('#searchInput').on('input', function() {
-    //         clearTimeout(timeout);
-    //         timeout = setTimeout(() => {
-    //             table.search(this.value).draw();
-    //         }, 300);
-    //     });
-
-    //     // ===================== DROPDOWN FILTER =====================
-    //     $('#filterKelas').on('change', function() {
-    //         filterState.kelas = $(this).val();
-    //     });
-
-    //     // ========================= EXPORT =========================
-    //     window.exportPdf = function() {
-    //         let url = "/export-siswa";
-
-    //         if (filterState.kelas) {
-    //             url += "?kelas=" + encodeURIComponent(filterState.kelas);
-    //         }
-
-    //         window.open(url, "_blank");
-    //     };
-
-
-    //     // ========================= EDIT =========================
-    //     $(document).on('click', '.btn-edit', function(e) {
-    //         e.preventDefault();
-
-    //         let idSiswa = $(this).data('id-siswa');
-    //         let namaSiswa = $(this).data('nama-siswa');
-    //         let nis = $(this).data('nis');
-    //         let kelas = $(this).data('kelas');
-    //         let jenis = $(this).data('jenis-kelamin');
-
-    //         $('#id-siswa').val(idSiswa);
-    //         $('#nama-siswa').val(namaSiswa);
-    //         $('#nis').val(nis);
-    //         $('#kelas').val(kelas);
-    //         $('#jenis-kelamin').val(jenis);
-
-    //         $('#edit-data-siswa').attr('action', '/update-siswa/' + idSiswa);
-
-    //         $('#modal-edit-data-siswa').modal('show');
-    //     });
-
-    //     // ========================= DELETE =========================
-    //     $(document).on('click', '.btn-delete', function(e) {
-    //         e.preventDefault();
-
-    //         let idSiswa = $(this).data('id-siswa');
-    //         let namaSiswa = $(this).data('nama-siswa');
-
-    //         Swal.fire({
-    //             title: 'Yakin?',
-    //             html: "Anda ingin menghapus <strong>" + namaSiswa + "</strong>?",
-    //             icon: 'warning',
-    //             showCancelButton: true,
-    //             confirmButtonText: 'Ya, hapus!',
-    //             cancelButtonText: 'Batal',
-    //             customClass: {
-    //                 confirmButton: 'btn btn-success margin-5',
-    //                 cancelButton: 'btn btn-danger margin-5'
-    //             },
-    //             buttonsStyling: false
-    //         }).then((result) => {
-    //             if (result.isConfirmed) {
-
-    //                 Swal.fire({
-    //                     title: 'Deleted!',
-    //                     html: "Siswa <strong>" + namaSiswa +
-    //                         "</strong> berhasil dihapus.",
-    //                     icon: 'success',
-    //                     timer: 3000,
-    //                     showConfirmButton: false
-    //                 });
-
-    //                 let form = $('<form>', {
-    //                     method: 'POST',
-    //                     action: '/delete-siswa/' + idSiswa
-    //                 });
-
-    //                 let token = $('<input>', {
-    //                     type: 'hidden',
-    //                     name: '_token',
-    //                     value: '{{ csrf_token() }}'
-    //                 });
-
-    //                 let method = $('<input>', {
-    //                     type: 'hidden',
-    //                     name: '_method',
-    //                     value: 'DELETE'
-    //                 });
-
-    //                 form.append(token, method).appendTo('body').submit();
-    //             }
-    //         });
-    //     });
-
-    //     // ========================= DATATABLE INIT =========================
-    //     let table;
-
-    //     if (!$.fn.DataTable.isDataTable('.data-table')) {
-    //         table = $('.data-table').DataTable({
-    //             responsive: false,
-    //             autoWidth: false,
-    //             pageLength: 10,
-    //             lengthChange: true,
-    //             ordering: false,
-    //             dom: 'lrtip',
-
-    //             language: {
-    //                 search: "",
-    //                 zeroRecords: "Data tidak ditemukan",
-    //                 info: "Showing _START_ to _END_ of _TOTAL_ entries",
-    //                 lengthMenu: "_MENU_",
-    //                 paginate: {
-    //                     next: ">>",
-    //                     previous: "<<"
-    //                 }
-    //             }
-    //         });
-
-    //         // $('#search-wrapper').html($('.dataTables_filter').detach());
-
-    //         $('#show-entries')
-    //             .html($('.dataTables_length').addClass('m-0 p-0').detach())
-    //             .prepend('<span class="my-1">Show :</span>');
-    //     }
-
-    //     // ========================= TOOLTIP =========================
-    //     $(function() {
-    //         $('[title]').tooltip({
-    //             placement: 'top',
-    //             offset: '0,3'
-    //         });
-    //     });
-    // });
-</script> --}}

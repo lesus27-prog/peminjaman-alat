@@ -32,17 +32,8 @@
                         <i class="fa-solid fa-screwdriver-wrench"></i>
                     </div>
                     <div class="stat-info">
-                        <p>Total Alat</p>
+                        <p>Alat Layak Pakai</p>
                         <h3 class="counter" data-target={{ $alat }}>{{ $alat }}</h3>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon bg-orange">
-                        <i class="bi bi-box-seam"></i>
-                    </div>
-                    <div class="stat-info">
-                        <p>Total Jenis</p>
-                        <h3 class="counter" data-target={{ $jenis }}>{{ $jenis }}</h3>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -54,14 +45,20 @@
                         <h3 class="counter" data-target={{ $alatBermasalah }}>{{ $alatBermasalah }}</h3>
                     </div>
                 </div>
-
-
-
+                <div class="stat-card">
+                    <div class="stat-icon bg-orange">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div class="stat-info">
+                        <p>Total Jenis</p>
+                        <h3 class="counter" data-target={{ $jenis }}>{{ $jenis }}</h3>
+                    </div>
+                </div>
             </div>
 
             <div class="row g-3">
                 <div class="col-md-6 mb-0">
-                    <div class="pd-20 card-kondisi card-box">
+                    <div class="pd-20 card-kondisi card-box card-jenis">
                         <h4 class="h4 text-dark d-flex align-items-center gap-2">
                             Distribusi Jenis Alat
 
@@ -96,7 +93,7 @@
 
                     </div>
                 </div>
-                <div class="col-md-6 mb-0 px-2">
+                <div class="col-md-6 mb-0 px-2 card-alat-pinjam">
                     <div class="pd-20 card-box height-100-p booking-card">
 
                         <h4 class="h4 text-dark d-flex align-items-center gap-2">
@@ -291,7 +288,7 @@
             //     show: false
             // },
 
-            colors: ['#3c6497', '#4f83c2', '#d7e3f4', '#f5f7fb', '#1f2a37'],
+            colors: ["#4E6FAE", "#6B8FD6", "#7FA8F8", "#9DC2FF", "#C9DCFF"],
 
             plotOptions: {
                 bar: {
@@ -415,11 +412,13 @@
                                 </td>
   <td>
               
-                    ${jenis}
+               ${jenis.replace(/\b\w/g, c => c.toUpperCase())}
              
             </td>
                                 <td>
-                                    ${item.nama_tipe ?? '-'}
+                                    ${item.nama_tipe
+    ? item.nama_tipe.replace(/\b\w/g, c => c.toUpperCase())
+    : '-'}
                                 </td>
 
                               
@@ -441,23 +440,24 @@
 
             labels: summary.map(item => item.nama_jenis),
 
-            colors: [ "#3c6497", "#4f83c2", "#60a5fa", "#93c5fd", "#dbeafe",
-    "#1d4ed8", "#2563eb", "#1e40af", "#0ea5e9", "#38bdf8",
+            colors: ["#3c6497", "#4f83c2", "#60a5fa", "#93c5fd", "#dbeafe",
+                "#1d4ed8", "#2563eb", "#1e40af", "#0ea5e9", "#38bdf8",
 
-    "#22c55e", "#16a34a", "#15803d", "#86efac", "#bbf7d0",
-    "#84cc16", "#65a30d", "#4d7c0f",
+                "#22c55e", "#16a34a", "#15803d", "#86efac", "#bbf7d0",
+                "#84cc16", "#65a30d", "#4d7c0f",
 
-    "#f59e0b", "#fbbf24", "#d97706", "#fcd34d", "#fde68a",
+                "#f59e0b", "#fbbf24", "#d97706", "#fcd34d", "#fde68a",
 
-    "#ef4444", "#dc2626", "#b91c1c", "#fca5a5", "#fecaca",
+                "#ef4444", "#dc2626", "#b91c1c", "#fca5a5", "#fecaca",
 
-    "#8b5cf6", "#7c3aed", "#6d28d9", "#c4b5fd", "#ddd6fe",
+                "#8b5cf6", "#7c3aed", "#6d28d9", "#c4b5fd", "#ddd6fe",
 
-    "#06b6d4", "#0891b2", "#0e7490", "#67e8f9", "#a5f3fc",
+                "#06b6d4", "#0891b2", "#0e7490", "#67e8f9", "#a5f3fc",
 
-    "#ec4899", "#db2777", "#be185d", "#f9a8d4", "#fbcfe8",
+                "#ec4899", "#db2777", "#be185d", "#f9a8d4", "#fbcfe8",
 
-    "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1"],
+                "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1"
+            ],
 
             stroke: {
                 width: 5,

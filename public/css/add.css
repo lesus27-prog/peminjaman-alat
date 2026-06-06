@@ -9,14 +9,14 @@
     -webkit-backdrop-filter: blur(18px);
 
     border-radius: 22px;
-  transition: transform 0.35s ease;
+  /* transition: transform 0.35s ease; */
     /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); */
 }
 
-.page-header:hover {
+/* .page-header:hover {
     transform: translateY(-5px) scale(1.01);
   
-}
+} */
 
 /* ===== BREADCRUMB ===== */
 .breadcrumb {
@@ -80,14 +80,14 @@
     /* box-shadow:
         0 18px 50px rgba(15, 23, 42, 0.08),
         0 2px 8px rgba(15, 23, 42, 0.04); */
- transition: transform 0.35s ease;
+ /* transition: transform 0.35s ease; */
     overflow: hidden;
 }
 
-.card:hover {
+/* .card:hover {
     transform: translateY(-5px) scale(1.01);
    
-}
+} */
 
 /* ===== HEADER PREMIUM ===== */
 .card-header {

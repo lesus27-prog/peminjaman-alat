@@ -4,15 +4,15 @@
     border-radius: 22px;
     /* border: 1.55px solid #dce3e9; */
     overflow: hidden;
-    transition: transform 0.35s ease;
+    /* transition: transform 0.35s ease; */
     /* box-shadow:
         0 3.5px 4px rgba(224, 224, 224, 0.8),
         0 1.5px 2px rgb(224, 224, 224, 0.8); */
 }
 
-.page-header:hover {
+/* .page-header:hover {
     transform: translateY(-5px) scale(1.01);
-}
+} */
 
 .page-header .row {
     position: relative;
@@ -66,4 +66,10 @@
     margin-bottom: 25px;
     border-radius: 22px !important;
     border: none;
+}
+
+@media (max-width: 768px) {
+    .card-box {
+        padding: 15px !important;
+    }
 }

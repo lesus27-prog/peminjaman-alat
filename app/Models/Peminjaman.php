@@ -17,7 +17,9 @@ class Peminjaman extends Model
         'tanggal_selesai',
         'jam_mulai',
         'jam_selesai',
-        'status_pinjam'
+        'status_pinjam',
+        'is_reminder_sent',
+        'kelas_siswa'
     ];
 
     public function siswa()
@@ -55,40 +57,6 @@ class Peminjaman extends Model
         // $sekarang = Carbon::parse('2026-05-06 12:30');
         $sekarang = now();
         return $sekarang->greaterThanOrEqualTo($batasMulai) && $sekarang->lessThanOrEqualTo($waktuSelesai);
-    }
-
-    public function jadwalFormat()
-    {
-        Carbon::setLocale('id');
-        $mulai = Carbon::parse($this->tanggal_mulai . ' ' . $this->jam_mulai);
-        $selesai = Carbon::parse($this->tanggal_selesai . ' ' . $this->jam_selesai);
-
-        if ($mulai->isToday()) {
-            $tanggalMulai = 'Hari ini,';
-        } elseif ($mulai->isTomorrow()) {
-            $tanggalMulai = 'Besok,';
-        } else {
-            $tanggalMulai = $mulai->translatedFormat('l, d F Y');
-        }
-
-        if ($selesai->isToday()) {
-            $tanggalSelesai = 'Hari ini,';
-        } elseif ($selesai->isTomorrow()) {
-            $tanggalSelesai = 'Besok,';
-        } else {
-            $tanggalSelesai = $selesai->translatedFormat('l, d F Y');
-        }
-
-        if ($mulai->isSameDay($selesai)) {
-            return $tanggalMulai . ' ' .
-                $mulai->format('H:i') . ' - ' .
-                $selesai->format('H:i');
-        }
-
-        return $tanggalMulai . ' ' .
-            $mulai->format('H:i') . ' - ' .
-            $tanggalSelesai . ' ' .
-            $selesai->format('H:i');
     }
 
     public function tanggalPemakaianFormat()

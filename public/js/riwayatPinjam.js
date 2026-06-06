@@ -64,6 +64,7 @@ $(document).ready(function () {
         autoWidth: false,
         pageLength: 10,
         lengthChange: true,
+        ordering: false,
         dom: "lrtip",
         language: {
             zeroRecords: "Data tidak ditemukan",
@@ -91,9 +92,23 @@ $(document).ready(function () {
     };
     // ===================== FILTER APPLY =====================
     $(".btn-universal").on("click", function () {
-        table.column(2).search(filterState.kelas).draw();
+        table
+            .column(2)
+            .search(
+                filterState.kelas ? "^" + filterState.kelas + "$" : "",
+                true,
+                false,
+            )
+            .draw();
 
-        table.column(3).search(filterState.tipe).draw();
+        table
+            .column(3)
+            .search(
+                filterState.tipe ? "^" + filterState.tipe + "$" : "",
+                true,
+                false,
+            )
+            .draw();
 
         table.draw();
 
@@ -224,15 +239,15 @@ $(document).ready(function () {
     $("#show-entries").prepend('<span style="margin-right:5px;">Show :</span>');
 
     window.exportPdf = function () {
-        let url = "/export-riwayat";
+        let url = "/export-laporan-peminjaman";
         let params = [];
 
         if (filterState.kelas) {
-            params.push("kelas=" + encodeURIComponent(filterState.kelas));
+            params.push("kelas=" + filterState.kelas);
         }
 
         if (filterState.tipe) {
-            params.push("tipe=" + encodeURIComponent(filterState.tipe));
+            params.push("tipe=" + filterState.tipe);
         }
 
         if (filterState.start) {
@@ -251,7 +266,7 @@ $(document).ready(function () {
 
         window.open(url, "_blank");
     };
-
+    
     $(function () {
         $("[title]").tooltip({
             placement: "top",

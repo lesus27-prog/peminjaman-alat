@@ -2,6 +2,7 @@ FROM php:8.3-fpm
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
+ cron \
     git unzip zip \
     libzip-dev \
     libmagickwand-dev \
@@ -39,6 +40,11 @@ RUN mkdir -p /etc/supervisor/conf.d
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+RUN echo "* * * * * cd /app && php artisan schedule:run >> /proc/1/fd/1 2>&1" > /etc/cron.d/laravel-scheduler
+
+RUN chmod 0644 /etc/cron.d/laravel-scheduler
+
+RUN crontab /etc/cron.d/laravel-scheduler
 # Run supervisor (web + scheduler)
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 

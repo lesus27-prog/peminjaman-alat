@@ -123,7 +123,7 @@ $(document).ready(function () {
 
                         total: {
                             show: true,
-                            label: "Total Alat",
+                            label: "Layak Pakai",
                             fontSize: "15px",
                             fontWeight: 600,
 
@@ -220,8 +220,8 @@ $(document).ready(function () {
                 <div class="text-center py-5 empty-state">
                     <div style="font-size: 50px;">🎉</div>
                     <h5 class="mt-3 text-success">Yeay!</h5>
-                    <p class="text-muted mb-0">
-                        Hari ini tidak ada peminjaman
+                    <p class=" mb-0 text-muted" style="font-size: 13px; font-weight: 500; color: #555;">
+                        Hari ini tidak ada permintaan peminjaman
                     </p>
                 </div>`;
                 } else {
@@ -273,7 +273,7 @@ $(document).ready(function () {
         let tanggal = $("#bookingDate").val();
 
         if (!tanggal) {
-            alert("Pilih tanggal dulu");
+             toastr.warning("Pilih tanggal terlebih dahulu");
             return;
         }
         const d = new Date(tanggal);
@@ -290,7 +290,7 @@ $(document).ready(function () {
         $("#booking-content").html(`
             <div class="text-center py-5">
                 <div class="spinner-border text-primary"></div>
-                 <p class="mt-2">Loading...</p>
+                 <p class="mt-2" style="font-size: 13px;">Mencari data...</p>
             </div>
         `);
 
@@ -374,10 +374,15 @@ $(document).ready(function () {
         let kode = $("#kode-alat").val();
 
         if (kode.trim() === "") {
-            alert("Masukkan kode alat");
+            toastr.warning("Masukkan kode alat!");
             return;
         }
 
+        // show loading
+        $("#track-loading").removeClass("d-none");
+        $("#track-empty, #track-summary, #track-table-wrapper").addClass(
+            "d-none",
+        );
         $.ajax({
             url: "/tracking-alat",
             type: "GET",
@@ -394,12 +399,24 @@ $(document).ready(function () {
 
             success: function (res) {
                 // reset semua tampilan dulu
+                $("#track-loading").addClass("d-none");
                 $("#track-empty").addClass("d-none");
                 $("#track-summary").addClass("d-none");
                 $("#track-table-wrapper").addClass("d-none");
 
                 if (!res.status) {
-                    $("#track-empty").removeClass("d-none").text(res.message);
+                    $("#track-loading").addClass("d-none");
+                    $("#track-summary").addClass("d-none");
+                    $("#track-table-wrapper").addClass("d-none");
+
+                    $("#track-empty").removeClass("d-none").html(`
+            <div style="font-size: 55px;">⚠️</div>
+            <h5 class="mt-3" style="color:#D21F3C">Alat Tidak Ditemukan</h5>
+            <p class="text-muted" style="font-size: 13px; font-weight: 500;">
+                ${res.message}
+            </p>
+        `);
+
                     return;
                 }
 
@@ -413,7 +430,17 @@ $(document).ready(function () {
                         </div>
                         <div class="mini-track-body">
                             <span>Tipe</span>
-                            <h5>${data.tipe}</h5>
+                            <h5>${data.tipe.replace(/\b\w/g, (c) => c.toUpperCase())}</h5>
+                        </div>
+                    </div>
+
+                    <div class="mini-track-card">
+                        <div class="mini-track-left">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <div class="mini-track-body">
+                            <span>Kondisi Alat</span>
+                            <h5>${data.kondisi.replace(/\b\w/g, (c) => c.toUpperCase())}</h5>
                         </div>
                     </div>
 
@@ -423,7 +450,7 @@ $(document).ready(function () {
                         </div>
                         <div class="mini-track-body">
                             <span>Status</span>
-                            <h5>${data.status}</h5>
+                            <h5>${data.status.replace(/\b\w/g, (c) => c.toUpperCase())}</h5>
                         </div>
                     </div>
 
@@ -444,7 +471,7 @@ $(document).ready(function () {
                 if (data.riwayat.length === 0) {
                     rows = `
                     <tr>
-                        <td colspan="6" class="text-center text-muted">
+                        <td colspan="7" class="text-center text-muted">
                             Tidak ada riwayat
                         </td>
                     </tr>
@@ -474,7 +501,20 @@ $(document).ready(function () {
                                               `
     }
 </td>
-          <td>${item.kondisi ? item.kondisi.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) : "-"}</td>
+       <td>
+    ${
+        item.kondisi === "rusak"
+            ? `<span class="badge badge-soft-danger rounded-pill">Rusak</span>`
+            : item.kondisi === "perlu perbaikan"
+              ? `<span class="badge badge-soft-warning rounded-pill">Perlu Perbaikan</span>`
+              : item.kondisi === "hilang"
+                ? `<span class="badge badge-soft-dark rounded-pill">Hilang</span>`
+                : item.kondisi === "baik"
+                  ? `<span class="badge badge-soft-success rounded-pill">Baik</span>`
+                  : "-"
+    }
+</td>
+<td>${item.catatan ? item.catatan : "-"}</td>
                         </tr>
                     `;
                     });
@@ -484,6 +524,12 @@ $(document).ready(function () {
 
                 $("#track-table-wrapper").removeClass("d-none");
             },
+            error: function () {
+                $("#track-loading").addClass("d-none");
+                $("#track-empty")
+                    .removeClass("d-none")
+                    .html("Terjadi kesalahan");
+            },
         });
     }
 
@@ -491,11 +537,25 @@ $(document).ready(function () {
         $("#track-summary").addClass("d-none").html("");
         $("#track-table-wrapper").addClass("d-none");
         $("#track-table").html("");
-        $("#track-empty").removeClass("d-none").text("Masukkan kode alat");
+
+        $("#track-empty").removeClass("d-none").html(`
+            <div style="font-size: 55px;">🔎</div>
+            <h5 class="mt-3">Lacak Alatmu</h5>
+            <p class="text-muted" style="font-size: 13px; font-weight: 500;">
+                Masukkan kode alat untuk mulai pencarian
+            </p>
+        `);
     }
 
     $("#btn-tracking-search").on("click", function () {
         cariAlat();
+    });
+
+    $("#kode-alat").on("keypress", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            cariAlat();
+        }
     });
 
     $("#kode-alat").on("input", function () {

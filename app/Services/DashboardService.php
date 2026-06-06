@@ -14,17 +14,21 @@ class DashboardService
 {
     public function dashboardAdmin()
     {
-        $siswa = Siswa::count();
+        $siswa = Siswa::whereHas('akunUser', function ($q) {
+            $q->where('status_akun', 'aktif');
+        })->count();
+
         $alat = TipeAlat::sum('stok');
 
         $alatDipinjam = Peminjaman::whereIn('status_pinjam', ['aktif', 'proses pengembalian'])
             ->with('tipeAlat')
             ->get()
-            ->sum(fn($pinjam) => $pinjam->tipeAlat->sum('pivot.quantity'));
+            ->sum(function ($pinjam) {
+                return $pinjam->tipeAlat->sum('pivot.quantity');
+            });
 
         $terlambat = Peminjaman::where('status_pinjam', 'aktif')
-            ->get()
-            ->filter(fn($pinjam) => $pinjam->terlambat())
+            ->whereRaw("CONCAT(tanggal_selesai, ' ', jam_selesai) < ?", [now()])
             ->count();
 
         $summary = DetailAlat::select('kondisi_alat', DB::raw('count(*) as total'))
@@ -47,7 +51,9 @@ class DashboardService
 
     public function dashboardKabeng()
     {
-        $siswa = Siswa::count();
+        $siswa = Siswa::whereHas('akunUser', function ($q) {
+            $q->where('status_akun', 'aktif');
+        })->count();
         $alat = DetailAlat::where('kondisi_alat', 'baik')->count();
         $jenis = JenisAlat::count();
 
@@ -58,32 +64,27 @@ class DashboardService
         ])->count();
 
         $summaryJenis = JenisAlat::withCount('tipeAlat')->get();
+
         $detailJenis = JenisAlat::with('tipeAlat.jenisAlat')->get();
 
-        $topAlat = TipeAlat::with('peminjaman')->get();
-
-        foreach ($topAlat as $item) {
-            $total = 0;
-
-            foreach ($item->peminjaman as $pinjam) {
-                if ($pinjam->status_pinjam == 'selesai') {
-                    $total += $pinjam->pivot->quantity ?? 0;
-                }
+        $topAlat = TipeAlat::withSum([
+            'peminjaman as total_dipinjam' => function ($q) {
+                $q->where('status_pinjam', 'selesai');
             }
+        ], 'peminjaman_tipe.quantity')
+            ->orderByDesc('total_dipinjam')
+            ->take(5)
+            ->get();
 
-            $item->total_dipinjam = $total;
-        }
-
-        $topAlat = $topAlat->sortByDesc('total_dipinjam')->take(5);
+        $raw = Peminjaman::selectRaw('MONTH(tanggal_selesai) as bulan, COUNT(*) as total')
+            ->whereHas('detailAlat')
+            ->groupByRaw('MONTH(tanggal_selesai)')
+            ->pluck('total', 'bulan');
 
         $pinjamBulanan = [];
 
         for ($i = 1; $i <= 12; $i++) {
-            $total = Peminjaman::whereHas('detailAlat', function ($q) use ($i) {
-                $q->whereMonth('peminjaman_detail.tanggal_pengembalian', $i);
-            })->count();
-
-            $pinjamBulanan[] = $total;
+            $pinjamBulanan[] = $raw[$i] ?? 0;
         }
 
         return compact(
@@ -112,10 +113,6 @@ class DashboardService
             ->where('id_siswa', $siswaId)
             ->count();
 
-        $peminjamanAktif = Peminjaman::where('status_pinjam', 'aktif')
-            ->where('id_siswa', $siswaId)
-            ->count();
-
         $prosesPengembalian = Peminjaman::where('status_pinjam', 'proses pengembalian')
             ->where('id_siswa', $siswaId)
             ->count();
@@ -129,7 +126,6 @@ class DashboardService
         return compact(
             'alatDipinjam',
             'siapDiambil',
-            'peminjamanAktif',
             'prosesPengembalian',
             'terlambat'
         );
@@ -139,6 +135,9 @@ class DashboardService
     {
         $alat = DetailAlat::with([
             'tipeAlat',
+            'peminjaman' => function ($query) {
+                $query->orderBy('tanggal_mulai', 'desc')->orderBy('jam_mulai', 'desc');;
+            },
             'peminjaman.siswa',
             'peminjaman.detailAlat'
         ])->where('kode_alat', $request->kode_alat)->first();
@@ -146,7 +145,8 @@ class DashboardService
         if (!$alat) {
             return response()->json([
                 'status' => false,
-                'message' => 'Alat tidak ditemukan'
+                'empty' => true,
+                'message' => 'Masukkan kode alat yang valid'
             ]);
         }
 
@@ -171,6 +171,7 @@ class DashboardService
                 'tanggal' => $pinjam->tanggal_mulai,
                 'terlambat' => $pinjam->terlambat() ? 'Terlambat' : 'Tepat Waktu',
                 'kondisi' => $pivot->kondisi_kembali ?? '-',
+                'catatan' => $pivot->catatan ?? '-'
             ];
         }
 
@@ -178,6 +179,7 @@ class DashboardService
             'status' => true,
             'data' => [
                 'tipe' => $alat->tipeAlat->nama_tipe,
+                'kondisi' => $alat->kondisi_alat,
                 'status' => $alat->status_alat,
                 'dipinjam' => $alat->peminjaman->count(),
                 'riwayat' => $riwayat
@@ -235,28 +237,5 @@ class DashboardService
         return response()->json([
             'data' => $result
         ]);
-    }
-
-    public function kondisiAlatKabeng()
-    {
-        $kondisi = TipeAlat::whereHas('detailAlat', function ($q) {
-            $q->where('kondisi_alat', '!=', 'baik');
-        })->get();
-        foreach ($kondisi as $item) {
-
-            $item->total_rusak = $item->detailAlat
-                ->where('kondisi_alat', 'rusak')
-                ->count();
-
-            $item->total_perbaikan = $item->detailAlat
-                ->where('kondisi_alat', 'perlu perbaikan')
-                ->count();
-
-            $item->total_hilang = $item->detailAlat
-                ->where('kondisi_alat', 'hilang')
-                ->count();
-        }
-
-        return view('kabeng.kondisiAlat', compact('kondisi'));
     }
 }

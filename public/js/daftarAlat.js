@@ -97,7 +97,10 @@ function updateJamKembali() {
 function checkNextButton() {
     let tanggalMulai = fpTglMulai.selectedDates.length > 0;
     let jamMulai = $("#jam-mulai").val();
-    $("#btn-next").prop("disabled", !(tanggalMulai || jamMulai));
+    $("#btn-next").prop(
+        "disabled",
+        !(tanggalMulai && jamMulai && isCari === true),
+    );
 }
 
 function reset() {
@@ -228,7 +231,7 @@ $(document).ready(function () {
         );
 
         $("#tanggal").text(formatTglMulai);
-      $("#jam").text(jamMulai.slice(0, 5));
+        $("#jam").text(jamMulai.slice(0, 5));
 
         $.ajax({
             url: "/check-alat",
@@ -348,10 +351,15 @@ $(document).ready(function () {
                 );
             },
 
-            error: function () {
-                toastr.error("Gagal mengambil data alat, silahkan coba lagi!");
-            },
+            // error: function () {
+            //     toastr.error("Gagal mengambil data alat, silahkan coba lagi!");
+            // },
 
+            error: function (xhr) {
+                console.log(xhr);
+                console.log(xhr.responseText);
+                toastr.error("Gagal mengambil data alat!");
+            },
             complete: function () {
                 $("#btn-cari")
                     .prop("disabled", false)
@@ -374,7 +382,7 @@ $(document).ready(function () {
             if (!selectedDates.length) return;
 
             if (isCari) {
-                reset();
+                // reset();
                 isCari = false;
             }
 
@@ -424,6 +432,7 @@ $(document).ready(function () {
         $("#jam-selesai").val("");
 
         updateJamKembali();
+        checkNextButton();
     });
 
     $("#tanggal-selesai").on("change", updateJamKembali);
@@ -509,6 +518,10 @@ $(document).ready(function () {
         checkNextButton();
     });
 
+    function ucwords(str) {
+        return str.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+
     $("#btn-next").on("click", function () {
         let alatDipilih = $(".alat-table.active, .alat-card.active").length > 0;
 
@@ -549,7 +562,7 @@ $(document).ready(function () {
             $("#list-alat").append(`
                         <tr data-index="${index}" data-id="${id}">
                             <td>${index + 1}</td>
-                            <td>${item.nama}</td>
+                            <td>${ucwords(item.nama)}</td>
                             <td>${item.jumlah}</td>
                            <td class="text-center">
                                 <button type="button" class="btn btn-sm btn-delete">
@@ -613,4 +626,10 @@ $(document).ready(function () {
             .search(val || "")
             .draw();
     });
+
+    $("#toggle-view")
+        .on("change", function () {
+            $("#grid-icon").toggleClass("active", this.checked);
+        })
+        .trigger("change");
 });

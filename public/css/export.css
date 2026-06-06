@@ -91,7 +91,7 @@
         }
 
         table th {
-            background-color: #dbeafe;
+            /* background-color: #dbeafe; */
             color: #000;
             text-align: center;
             font-weight: bold;
@@ -249,3 +249,5 @@
             background-color: #f2f2f2;
             /* 🔥 abu-abu soft */
         }
+
+      

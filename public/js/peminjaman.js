@@ -6,14 +6,7 @@ function initDataTable(tableId, searchWrapperId, showEntriesId) {
         lengthChange: true,
         searching: true,
         dom: "lfrtip",
-
-        columnDefs: [
-            {
-                orderable: false,
-                targets: 0,
-            },
-        ],
-
+        ordering: false,
         language: {
             search: "",
             searchPlaceholder: "🔍 Search...",
@@ -122,6 +115,8 @@ $(document).ready(function () {
         let alatList = button.data("alat");
 
         let idPinjam = button.data("id-pinjam");
+
+        let kode = "PJM-0" + idPinjam;
         let nama = button.data("nama-siswa");
         let kelas = button.data("kelas");
         let tglMulai = button.data("tanggal-mulai");
@@ -129,7 +124,7 @@ $(document).ready(function () {
         let terlambat = button.data("terlambat");
 
         /* ========= SET DATA HEADER ========= */
-        $("#v-id-pinjam").text(idPinjam);
+        $("#v-id-pinjam").text(kode);
         $("#v-nama-siswa").text(nama);
         $("#v-kelas").text(kelas);
         $("#v-tanggal-mulai").text(tglMulai);
@@ -258,12 +253,17 @@ $(document).ready(function () {
         `;
 
             tipe.items.forEach((alat) => {
-                html += `
-            <div class="alat-row">
+                let badgeClass =
+                    alat.pivot.is_kembali == 0
+                        ? "kode-badge-tidak-lengkap"
+                        : "kode-badge-lengkap";
 
-                <span class="kode-badge">
-                    ${alat.kode_alat}
-                </span>
+                html += `
+    <div class="alat-row">
+
+        <span class="${badgeClass}">
+            ${alat.kode_alat}
+        </span>
 
                 <select
                   name="kondisi_kembali[${alat.id_detail_alat}]">
@@ -310,6 +310,13 @@ $(document).ready(function () {
             offset: "0,3",
         });
     });
-});
 
-// ===================== DETAIL TOGGLE =====================
+    $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
+        const tab = $(e.target).attr("href").replace("#", "");
+
+        // ubah URL tanpa reload
+        const url = new URL(window.location);
+        url.searchParams.set("tab", tab);
+        window.history.pushState({}, "", url);
+    });
+});

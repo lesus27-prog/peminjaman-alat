@@ -8,10 +8,10 @@
     <title>@yield('title')</title>
 
     <!-- Site favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('deskap/vendors/images/apple-touch-icon.png') }}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('deskap/vendors/images/favicon-32x32.png') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('logo-smkn7-resmi.jpg') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('logo-smkn7-resmi.jpg') }}" />
     <link rel="icon" type="image/png" sizes="16x16"
-        href="{{ asset('deskap/vendors/images/favicon-16x16.png') }}" />
+        href="{{ asset('logo-smkn7-resmi.jpg') }}" />
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -220,8 +220,6 @@
         </div>
     </div>
 
-
-
     <div class="left-side-bar sidebar-light">
         <div class="brand-logo">
             <a href="{{ route('dashboardAdmin.index') }}">
@@ -261,7 +259,7 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="{{ route('alatAdmin.index') }}" class="dropdown-toggle no-arrow">
+                        <a href="{{ route('alat.index') }}" class="dropdown-toggle no-arrow">
                             <span class="micon bi bi-ui-checks"></span><span class="mtext">Daftar Alat</span>
                         </a>
                     </li>
@@ -273,9 +271,15 @@
                     </li>
 
                     <li class="dropdown">
-                        <a href="{{ route('riwayatPinjamAdmin.index') }}" class="dropdown-toggle no-arrow">
+                        <a href="{{ route('riwayatPinjamAdminKabeng.index') }}" class="dropdown-toggle no-arrow">
                             <span class="micon bi bi-bookmarks-fill"></span><span class="mtext">Riwayat
                                 Peminjaman</span>
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="{{ route('kondisiAlat.index') }}" class="dropdown-toggle no-arrow">
+                            <span class="micon bi bi-bookmarks-fill"></span><span class="mtext">Alat
+                                Bermasalah</span>
                         </a>
                     </li>
                 </ul>

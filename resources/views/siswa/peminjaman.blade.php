@@ -1,8 +1,8 @@
 @extends('layouts.siswa')
 @section('title', 'Peminjaman')
 @section('link')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/content.css') }}">
     <link rel="stylesheet" href="{{ asset('css/universal.css') }}">
@@ -40,7 +40,8 @@
                         </div>
                         <nav aria-label="breadcrumb" role="navigation">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><i class="bx bx-home"></i>
+                                <li class="breadcrumb-item">
+                                    <i class="bx bx-home"></i>
                                     <a href="{{ route('dashboardSiswa.index') }}">Dashboard Siswa</a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page">
@@ -55,33 +56,34 @@
                 <div class="tab-system">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active text-blue" data-toggle="tab" href="#menunggu" role="tab"
-                                aria-selected="true">Menunggu</a>
+                            <a class="nav-link {{ $tab == 'menunggu' ? 'active' : '' }} text-blue" data-toggle="tab"
+                                href="#menunggu" role="tab" aria-selected="true">Menunggu</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-blue" data-toggle="tab" href="#siap-diambil" role="tab"
-                                aria-selected="false">Siap Diambil</a>
+                            <a class="nav-link {{ $tab == 'siap-diambil' ? 'active' : '' }} text-blue" data-toggle="tab"
+                                href="#siap-diambil" role="tab" aria-selected="false">Siap Diambil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-blue" data-toggle="tab" href="#aktif" role="tab"
-                                aria-selected="false">Aktif</a>
+                            <a class="nav-link {{ $tab == 'aktif' ? 'active' : '' }} text-blue" data-toggle="tab"
+                                href="#aktif" role="tab" aria-selected="false">Aktif</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-blue" data-toggle="tab" href="#proses-pengembalian" role="tab"
-                                aria-selected="false">Proses Pengembalian</a>
+                            <a class="nav-link {{ $tab == 'proses-pengembalian' ? 'active' : '' }} text-blue"
+                                data-toggle="tab" href="#proses-pengembalian" role="tab" aria-selected="false">Proses
+                                Pengembalian</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-blue" data-toggle="tab" href="#batal" role="tab"
-                                aria-selected="false">Dibatalkan</a>
+                            <a class="nav-link {{ $tab == 'batal' ? 'active' : '' }} text-blue" data-toggle="tab"
+                                href="#batal" role="tab" aria-selected="false">Dibatalkan</a>
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane fade show active tab-custom px-3" id="menunggu" role="tabpanel">
+                        <div class="tab-pane fade tab-custom px-3 {{ $tab == 'menunggu' ? 'show active' : '' }}"
+                            id="menunggu" role="tabpanel">
                             <div class="row  align-items-center">
                                 <div class="col-md-6 col-12 mb-md-0">
                                     <div class="input-group mt-4 mb-0">
                                         <div id="search-wrapper-menunggu" class="pr-2"></div>
-
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-12 d-flex gap-2 flex-wrap justify-content-md-end mt-2">
@@ -91,12 +93,12 @@
                             <div class="pb-20 pt-1">
                                 <div class="table-responsive">
                                     <table class="data-table table hover py-3 px-4 border-0 py-3 px-4 border-0"
-                                        style="background: #e9edf9b1 !important; border-radius: 22px;" id="table-menunggu"
-                                        style="background: #e9edf9b1 !important; border-radius: 22px;">
+                                        style="background: #e9edf9b1 !important; border-radius: 22px;" id="table-menunggu">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
-                                                <th>Jadwal Pemakaian</th>
+                                                <th>Tanggal Pemakaian</th>
+                                                <th>Batas Pengembalian</th>
                                                 <th>Status</th>
                                                 <th>Alat</th>
                                                 <th>Aksi</th>
@@ -108,7 +110,8 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
-                                                    <td>{{ $item->jadwalFormat() }}</td>
+                                                    <td>{{ $item->tanggalPemakaianFormat() }}</td>
+                                                    <td>{{ $item->batasPengembalianFormat() }}</td>
                                                     <td>
                                                         <span
                                                             class="badge {{ badgeClass($item->status_pinjam) }} px-3 py-2 rounded-pill">
@@ -121,23 +124,18 @@
                                                                 <i class="fas fa-plus"></i>
                                                             </span>
                                                         </button>
-
                                                         <div class="detail-alat mt-2" style="display:none;">
-
                                                             @foreach ($item->tipeAlat as $detail)
                                                                 <div class="mb-3 pb-2 border-bottom">
-
                                                                     <div
                                                                         class="d-flex justify-content-between align-items-center">
                                                                         <span class="fw-semibold">
                                                                             {{ ucwords($detail->nama_tipe) }}
                                                                         </span>
-
                                                                         <small class="text-muted">
                                                                             x{{ $detail->pivot->quantity }}
                                                                         </small>
                                                                     </div>
-
                                                                     <div class="mt-2 ps-2">
                                                                         @foreach ($item->detailAlat->where('id_tipe', $detail->id_tipe) as $alat)
                                                                             <div class="text-muted small">
@@ -145,7 +143,6 @@
                                                                             </div>
                                                                         @endforeach
                                                                     </div>
-
                                                                 </div>
                                                             @endforeach
                                                         </div>
@@ -154,6 +151,7 @@
                                                         <form action="{{ route('peminjaman.cancel', $item->id_pinjam) }}"
                                                             method="POST">
                                                             @csrf
+                                                            <input type="hidden" name="tab" value="menunggu">
                                                             <button type="submit" class="btn-cancel-soft" title="Batalkan">
                                                                 <i class="fa-solid fa-circle-xmark"></i>
                                                             </button>
@@ -166,7 +164,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade tab-custom px-3" id="siap-diambil" role="tabpanel">
+                        <div class="tab-pane fade tab-custom px-3 {{ $tab == 'siap-diambil' ? 'show active' : '' }}"
+                            id="siap-diambil" role="tabpanel">
                             <div class="row align-items-center">
                                 <div class="col-md-6 col-12 mb-md-0">
                                     <div class="input-group mt-3 mb-0">
@@ -184,7 +183,8 @@
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
-                                                <th>Jadwal Pemakaian</th>
+                                                <th>Tanggal Pemakaian</th>
+                                                <th>Batas Pengembalian</th>
                                                 <th>Status</th>
                                                 <th>Alat</th>
                                                 <th>Aksi</th>
@@ -196,7 +196,8 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
-                                                    <td>{{ $item->jadwalFormat() }}</td>
+                                                    <td>{{ $item->tanggalPemakaianFormat() }}</td>
+                                                    <td>{{ $item->batasPengembalianFormat() }}</td>
                                                     <td>
                                                         <span
                                                             class="badge {{ badgeClass($item->status_pinjam) }} px-3 py-2 rounded-pill">
@@ -209,23 +210,18 @@
                                                                 <i class="fas fa-plus"></i>
                                                             </span>
                                                         </button>
-
                                                         <div class="detail-alat mt-2" style="display:none;">
-
                                                             @foreach ($item->tipeAlat as $detail)
                                                                 <div class="mb-3 pb-2 border-bottom">
-
                                                                     <div
                                                                         class="d-flex justify-content-between align-items-center">
                                                                         <span class="fw-semibold">
                                                                             {{ ucwords($detail->nama_tipe) }}
                                                                         </span>
-
                                                                         <small class="text-muted">
                                                                             x{{ $detail->pivot->quantity }}
                                                                         </small>
                                                                     </div>
-
                                                                     <div class="mt-2 ps-2">
                                                                         @foreach ($item->detailAlat->where('id_tipe', $detail->id_tipe) as $alat)
                                                                             <div class="text-muted small">
@@ -233,23 +229,25 @@
                                                                             </div>
                                                                         @endforeach
                                                                     </div>
-
                                                                 </div>
                                                             @endforeach
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="action-group">
-                                                            <a href="{{ route('peminjaman.scan', $item->id_pinjam) }}"><button
-                                                                    type="button" class="btn btn-camera-soft"
+                                                            <a href="{{ route('peminjaman.scan', $item->id_pinjam) }}">
+                                                                <button type="button" class="btn btn-camera-soft"
                                                                     title="Scan"
                                                                     {{ !$item->cameraActive() ? 'disabled title=Belum masuk waktu scan' : '' }}>
                                                                     <i class="fa-solid fa-camera"></i>
-                                                                </button></a>
+                                                                </button>
+                                                            </a>
                                                             <form
                                                                 action="{{ route('peminjaman.cancel', $item->id_pinjam) }}"
                                                                 method="POST" class="m-0">
                                                                 @csrf
+                                                                <input type="hidden" name="tab"
+                                                                    value="siap-diambil">
                                                                 <button type="submit" class="btn-cancel-soft"
                                                                     title="Batalkan">
                                                                     <i class="fa-solid fa-circle-xmark"></i>
@@ -264,12 +262,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade tab-custom px-3" id="aktif" role="tabpanel">
+                        <div class="tab-pane fade tab-custom px-3 {{ $tab == 'aktif' ? 'show active' : '' }}"
+                            id="aktif" role="tabpanel">
                             <div class="row align-items-center">
                                 <div class="col-md-6 col-12 mb-md-0">
                                     <div class="input-group mt-3 mb-0">
                                         <div id="search-wrapper-aktif" class="pr-2"></div>
-
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-12 d-flex gap-2 flex-wrap justify-content-md-end mt-2">
@@ -327,23 +325,18 @@
                                                                 <i class="fas fa-plus"></i>
                                                             </span>
                                                         </button>
-
                                                         <div class="detail-alat mt-2" style="display:none;">
-
                                                             @foreach ($item->tipeAlat as $detail)
                                                                 <div class="mb-3 pb-2 border-bottom">
-
                                                                     <div
                                                                         class="d-flex justify-content-between align-items-center">
                                                                         <span class="fw-semibold">
                                                                             {{ ucwords($detail->nama_tipe) }}
                                                                         </span>
-
                                                                         <small class="text-muted">
                                                                             x{{ $detail->pivot->quantity }}
                                                                         </small>
                                                                     </div>
-
                                                                     <div class="mt-2 ps-2">
                                                                         @foreach ($item->detailAlat->where('id_tipe', $detail->id_tipe) as $alat)
                                                                             <div class="text-muted small">
@@ -351,7 +344,6 @@
                                                                             </div>
                                                                         @endforeach
                                                                     </div>
-
                                                                 </div>
                                                             @endforeach
                                                         </div>
@@ -359,29 +351,8 @@
                                                     <td> <a href="{{ route('peminjamanSiswa.prosesPengembalian', $item->id_pinjam) }}"
                                                             class="btn btn-camera-soft" title="Scan">
                                                             <i class="fa-solid fa-camera"></i>
-                                                        </a></td>
-                                                    {{-- <td class="td-detail">
-                                                        <button class="btn-detail-soft btn-detail">
-                                                            <span class="icon-wrap">
-                                                                <i class="fas fa-plus"></i>
-                                                            </span>
-                                                        </button>
-                                                        <div class="detail-alat mt-2" style="display:none;">
-                                                            <ul class="mb-0 p-0 detail-list">
-                                                                @foreach ($item->tipeAlat as $detail)
-                                                                    <li>
-                                                                        <span class="dot"></span>
-                                                                        <span
-                                                                            class="name">{{ ucwords($detail->nama_tipe) }}
-                                                                        </span>
-                                                                        <span
-                                                                            class="qty">x{{ $detail->pivot->quantity }}
-                                                                        </span>
-                                                                    </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
-                                                    </td> --}}
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -389,12 +360,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade tab-custom px-3" id="proses-pengembalian" role="tabpanel">
+                        <div class="tab-pane fade tab-custom px-3 {{ $tab == 'proses-pengembalian' ? 'show active' : '' }}"
+                            id="proses-pengembalian" role="tabpanel">
                             <div class="row align-items-center">
                                 <div class="col-md-6 col-12 mb-md-0">
                                     <div class="input-group mt-3 mb-0">
                                         <div id="search-wrapper-proses-pengembalian" class="pr-2"></div>
-
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-12 d-flex gap-2 flex-wrap justify-content-md-end mt-2">
@@ -453,23 +424,18 @@
                                                                 <i class="fas fa-plus"></i>
                                                             </span>
                                                         </button>
-
                                                         <div class="detail-alat mt-2" style="display:none;">
-
                                                             @foreach ($item->tipeAlat as $detail)
                                                                 <div class="mb-3 pb-2 border-bottom">
-
                                                                     <div
                                                                         class="d-flex justify-content-between align-items-center">
                                                                         <span class="fw-semibold">
                                                                             {{ ucwords($detail->nama_tipe) }}
                                                                         </span>
-
                                                                         <small class="text-muted">
                                                                             x{{ $detail->pivot->quantity }}
                                                                         </small>
                                                                     </div>
-
                                                                     <div class="mt-2 ps-2">
                                                                         @foreach ($item->detailAlat->where('id_tipe', $detail->id_tipe) as $alat)
                                                                             <div class="text-muted small">
@@ -477,7 +443,6 @@
                                                                             </div>
                                                                         @endforeach
                                                                     </div>
-
                                                                 </div>
                                                             @endforeach
                                                         </div>
@@ -489,12 +454,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade tab-custom px-3" id="batal" role="tabpanel">
+                        <div class="tab-pane fade tab-custom px-3 {{ $tab == 'batal' ? 'show active' : '' }}"
+                            id="batal" role="tabpanel">
                             <div class="row align-items-center">
                                 <div class="col-md-6 col-12 mb-md-0">
                                     <div class="input-group mt-3 mb-0">
                                         <div id="search-wrapper-batal" class="pr-2"></div>
-
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-12 d-flex gap-2 flex-wrap justify-content-md-end mt-2">
@@ -508,7 +473,8 @@
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
-                                                <th>Jadwal Pemakaian</th>
+                                                <th>Tanggal Pemakaian</th>
+                                                <th>Batas Pengembalian</th>
                                                 <th>Alat</th>
                                                 <th>Status</th>
                                             </tr>
@@ -519,30 +485,26 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
-                                                    <td>{{ $item->jadwalFormat() }}</td>
+                                                    <td>{{ $item->tanggalPemakaianFormat() }}</td>
+                                                    <td>{{ $item->batasPengembalianFormat() }}</td>
                                                     <td class="td-detail">
                                                         <button class="btn-detail-soft btn-detail">
                                                             <span class="icon-wrap">
                                                                 <i class="fas fa-plus"></i>
                                                             </span>
                                                         </button>
-
                                                         <div class="detail-alat mt-2" style="display:none;">
-
                                                             @foreach ($item->tipeAlat as $detail)
                                                                 <div class="mb-3 pb-2 border-bottom">
-
                                                                     <div
                                                                         class="d-flex justify-content-between align-items-center">
                                                                         <span class="fw-semibold">
                                                                             {{ ucwords($detail->nama_tipe) }}
                                                                         </span>
-
                                                                         <small class="text-muted">
                                                                             x{{ $detail->pivot->quantity }}
                                                                         </small>
                                                                     </div>
-
                                                                     <div class="mt-2 ps-2">
                                                                         @foreach ($item->detailAlat->where('id_tipe', $detail->id_tipe) as $alat)
                                                                             <div class="text-muted small">
@@ -550,7 +512,6 @@
                                                                             </div>
                                                                         @endforeach
                                                                     </div>
-
                                                                 </div>
                                                             @endforeach
                                                         </div>
@@ -574,107 +535,100 @@
         </div>
     </div>
 @endsection
+@section('modal')
+    <div class="modal fade" id="cancel-success" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body font-18">
+                    <h3 class="mb-20">Berhasil!</h3>
+                    <div class="mb-30">
+                        <img src="{{ asset('deskap/vendors/images/success.png') }}" alt="success" />
+                    </div>
+                    <p id="cancel-success-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="modal fade" id="prosesPeminjamanScan-success" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body font-18">
+                    <h3 class="mb-20">Berhasil!</h3>
+                    <div class="mb-30">
+                        <img src="{{ asset('deskap/vendors/images/success.png') }}" alt="success" />
+                    </div>
+                    <p id="prosesPeminjamanScan-success-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="prosesPengembalianScan-success" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body font-18">
+                    <h3 class="mb-20">Berhasil!</h3>
+                    <div class="mb-30">
+                        <img src="{{ asset('deskap/vendors/images/success.png') }}" alt="success" />
+                    </div>
+                    <p id="prosesPengembalianScan-success-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
 @push('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="{{asset('js/peminjaman.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/peminjaman.js') }}"></script>
     <script>
-        @if (session('error'))
-            toastr.error("{{ session('error') }}");
-        @endif
-
-        @if (session('success'))
-            toastr.success("{{ session('success') }}");
-        @endif
-    </script>
-    {{-- <script>
-        function initDataTable(tableId, searchWrapperId, showEntriesId) {
-            let table = $(tableId).DataTable({
-                responsive: false,
-                autoWidth: false,
-                pageLength: 10,
-                lengthChange: true,
-                searching: true,
-                dom: 'lfrtip',
-
-                columnDefs: [{
-                    orderable: false,
-                    targets: 0
-                }],
-
-                language: {
-                    search: "",
-                    searchPlaceholder: "🔍 Search...",
-                    zeroRecords: "Data tidak ditemukan",
-                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                    lengthMenu: "_MENU_",
-                    paginate: {
-                        next: ">>",
-                        previous: "<<"
-                    }
-                }
-            });
-            $(searchWrapperId).html($(tableId + '_filter').detach());
-            $(showEntriesId).html($(tableId + '_length').detach()).prepend('<span class="mr-1">Show :</span>');
-
-            return table;
-        }
-
-        // ===================== TAB INDICATOR =====================
-        function moveTab(el) {
-            let $el = $(el);
-            let $parent = $el.closest('.nav-tabs');
-
-            $parent.css({
-                '--x': $el.position().left + 'px',
-                '--w': $el.outerWidth() + 'px'
-            });
-        }
-
-        // ===================== DOCUMENT READY =====================
         $(document).ready(function() {
+            @if (session('cancel_success'))
+                $('#cancel-success-text').html(
+                    '{{ session('cancel_success') }}'
+                );
 
-            // ===== INIT TABLE =====
-            initDataTable('#table-menunggu', '#search-wrapper-menunggu', '#show-entries-menunggu');
-            initDataTable('#table-siap-diambil', '#search-wrapper-siap-diambil', '#show-entries-siap-diambil');
-            initDataTable('#table-aktif', '#search-wrapper-aktif', '#show-entries-aktif');
-            initDataTable('#table-proses-pengembalian', '#search-wrapper-proses-pengembalian',
-                '#show-entries-proses-pengembalian');
-            initDataTable('#table-batal', '#search-wrapper-batal', '#show-entries-batal');
+                $('#cancel-success').modal('show');
 
-            // ===== TAB CLICK =====
-            $('.nav-tabs .nav-link').on('click', function() {
-                setTimeout(() => moveTab(this), 50);
-            });
+                setTimeout(function() {
+                    $('#cancel-success').modal('hide');
+                }, 3000);
+            @endif
 
-            // ===== INIT TAB POSITION =====
-            moveTab($('.nav-tabs .nav-link.active'));
+            @if (session('cancel_error'))
+                toastr.error("{{ session('cancel_error') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
+                    progressBar: true,
+                    closeButton: true
+                });
+            @endif
 
-            // ===== HOVER EFFECT =====
-            $('.nav-tabs .nav-link').on('mouseenter', function() {
-                moveTab(this);
-            });
+            @if (session('prosesPeminjamanScan_success'))
+                $('#prosesPeminjamanScan-success-text').html(
+                    '{{ session('prosesPeminjamanScan_success') }}'
+                );
+
+                $('#prosesPeminjamanScan-success').modal('show');
+
+                setTimeout(function() {
+                    $('#prosesPeminjamanScan-success').modal('hide');
+                }, 3000);
+            @endif
+
+            @if (session('prosesPengembalianScan_success'))
+                $('#prosesPengembalianScan-success-text').html(
+                    'Proses pengembalian alat dengan ID Pinjam <strong>PJM-0{{ session('prosesPengembalianScan_success') }}</strong> berhasil dilakukan'
+                );
+
+                $('#prosesPengembalianScan-success').modal('show');
+
+                setTimeout(function() {
+                    $('#prosesPengembalianScan-success').modal('hide');
+                }, 3000);
+            @endif
+
 
         });
-
-        // ===================== DETAIL TOGGLE =====================
-
-        $(document).on('click', '.btn-detail', function() {
-
-            let detail = $(this).siblings('.detail-alat');
-            let icon = $(this).find('i');
-            let isPlus = icon.hasClass('fa-plus');
-
-            detail.stop(true, true).slideToggle(220);
-
-            $(this).toggleClass('active');
-            if (isPlus) {
-                icon.removeClass('fa-plus').addClass('fa-minus');
-            } else {
-                icon.removeClass('fa-minus').addClass('fa-plus');
-            }
-        });
-    </script> --}}
+    </script>
 @endpush
-
-

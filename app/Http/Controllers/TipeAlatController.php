@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\DetailAlat;
 use App\Models\JenisAlat;
 use App\Models\TipeAlat;
 use App\Services\TipeAlatService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +19,27 @@ class TipeAlatController extends Controller
     {
         $tipes = TipeAlat::with('jenisAlat')->get();
         $jenis = JenisAlat::all();
-        return view('admin.tipe.tipeIndex', compact('tipes', 'jenis'));
+        $view = Auth::user()->role === 'admin'
+            ? 'admin.tipe.tipeIndex'
+            : 'kabeng.laporanAlatIndex';
+
+        return view($view, compact('tipes', 'jenis'));
+    }
+
+    public function kondisiAlatIndex()
+    {
+        $kondisi = DetailAlat::with('tipeAlat.jenisAlat')
+            ->where('kondisi_alat', '!=', 'baik')
+            ->get();
+
+        $jenis = JenisAlat::all();
+        $tipe = TipeAlat::all();
+
+        $view = Auth::user()->role === 'admin'
+            ? 'admin.tipe.kondisiAlatIndex'
+            : 'kabeng.laporanKondisiAlatIndex';
+
+        return view($view, compact('kondisi', 'jenis', 'tipe'));
     }
 
     public function add()
@@ -45,66 +67,62 @@ class TipeAlatController extends Controller
                 'lokasi_rak' => strtolower($request->lokasi_rak),
                 'gambar' => ''
             ]);
-            // $extension = $request->file('gambar')->getClientOriginalExtension();
-            // $gambarPath = 'gambarTipe/' . $tipe->id_tipe . '.' . $extension;
-            // $gambar = $request->file('gambar')->storeAs('public', $gambarPath);
 
             if ($request->hasFile('gambar')) {
                 $file = $request->file('gambar');
                 $namaFile = $tipe->id_tipe . '.' . $file->getClientOriginalExtension();
-
-                // Pindahkan ke storage/app/public/gambarTipe
                 $file->move(storage_path('app/public/gambarTipe'), $namaFile);
-
-                // Simpan path relatif ke DB
                 $tipe->update(['gambar' => 'gambarTipe/' . $namaFile]);
             }
 
             $tipeAlatService->generateQr($tipe, $tipe->stok);
-
             DB::commit();
-            return redirect()->route('tipe.index')->with('store_success', ucwords(strtolower($tipe->nama_tipe)));
+            return redirect()
+                ->route('tipe.index')
+                ->with('store_success', ucwords(strtolower($tipe->nama_tipe)));
         } catch (\Exception $e) {
             DB::rollback();
-            dd($e->getMessage());
-            // return redirect()->back()->with('error', 'Data tipe gagal ditambahkan');
+            return redirect()
+                ->back()
+                ->with('store_error', 'Data tipe gagal ditambahkan');
         }
     }
 
-
-    public function update(Request $request, $id)
+    public function update(Request $request, $idTipe)
     {
-
         $request->validate([
             'nama_tipe' => [
                 'required',
                 'string',
-                Rule::unique('tipe_alat', 'nama_tipe')->ignore($id, 'id_tipe')
+                Rule::unique('tipe_alat', 'nama_tipe')->ignore($idTipe, 'id_tipe')
             ],
             'lokasi_rak' => 'required|string',
             'gambar' => 'nullable|image'
         ]);
 
         try {
-            $tipe = TipeAlat::findOrFail($id);
+            $tipe = TipeAlat::findOrFail($idTipe);
             $dataUpdate = [
                 'nama_tipe' => strtolower($request->nama_tipe),
                 'lokasi_rak' => strtolower($request->lokasi_rak),
                 'id_jenis' => $request->id_jenis
             ];
 
-            // Kalau ada gambar baru
             if ($request->hasFile('gambar')) {
-                $file = $request->file('gambar'); // ✅ pakai file()
+                $file = $request->file('gambar');
                 $namaFile = $tipe->id_tipe . '.' . $file->getClientOriginalExtension();
                 $file->move(storage_path('app/public/gambarTipe'), $namaFile);
-                $dataUpdate['gambar'] = 'gambarTipe/' . $namaFile; // update path gambar
+                $dataUpdate['gambar'] = 'gambarTipe/' . $namaFile;
             }
 
             $tipe->update($dataUpdate);
-            return redirect()->route('tipe.index')->with('update_success', ucwords(strtolower($tipe->nama_tipe)));
+            return redirect()
+                ->route('tipe.index')
+                ->with('update_success', ucwords(strtolower($tipe->nama_tipe)));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error' . 'Data gagal diupdate');
+            return redirect()
+                ->back()
+                ->with('update_error', 'Data gagal diupdate');
         }
     }
 
@@ -114,43 +132,79 @@ class TipeAlatController extends Controller
         $id = $request->id_tipe;
 
         $query = TipeAlat::where('nama_tipe', $nama);
-
-        // kalau sedang edit, kecualikan data dirinya sendiri
         if ($id) {
             $query->where('id_tipe', '!=', $id);
         }
 
         $exists = $query->exists();
-
         return response()->json([
             'exist' => $exists
         ]);
     }
+
     public function delete($id)
     {
         try {
             DB::beginTransaction();
             $tipe = TipeAlat::findOrFail($id);
+            $namaTipe = $tipe->nama_tipe;
             $tipe->detailAlat()->delete();
             $tipe->delete();
             DB::commit();
-            return redirect()->route('tipe.index');
+            return redirect()
+                ->route('tipe.index')
+                ->with('delete_success', ucwords($namaTipe));
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Data gagal dihapus');
+            return redirect()
+                ->back()
+                ->with('delete_error', 'Data gagal dihapus');
         }
     }
 
-    public function exportPdf(Request $request)
+    public function exportLaporanAlat(Request $request)
     {
+        $query = TipeAlat::with('jenisAlat');
+
         if ($request->idJenis) {
-            $tipes = TipeAlat::where('id_jenis', $request->idJenis)->get();
-        } else {
-            $tipes = TipeAlat::all();
+            $query->where('id_jenis', $request->idJenis);
         }
 
-        $pdf = Pdf::loadView('admin.tipe.exportPdf', compact('tipes'));
+        $tipes = $query->get()->groupBy('id_jenis');
 
-        return $pdf->download('Data Tipe Alat.pdf');
+        $pdf = Pdf::loadView('exportAlat', compact('tipes'));
+        return $pdf->download('Laporan Data Alat.pdf');
+    }
+
+    public function exportKondisi(Request $request)
+    {
+
+        $query = DetailAlat::with('tipeAlat.jenisAlat');
+
+        if ($request->jenis) {
+            $query->whereHas('tipeAlat.jenisAlat', function ($q) use ($request) {
+                $q->where('nama_jenis', $request->jenis);
+            });
+        }
+
+        if ($request->tipe) {
+            $query->whereHas('tipeAlat', function ($q) use ($request) {
+                $q->where('nama_tipe', $request->tipe);
+            });
+        }
+
+        if ($request->kondisi) {
+            $query->where('kondisi_alat', $request->kondisi);
+        } else {
+            $query->where('kondisi_alat', '!=', 'baik');
+        }
+
+        $kondisi = $query->get()->groupBy(function ($item) {
+            return $item->tipeAlat->jenisAlat->nama_jenis;
+        });
+
+        $pdf = Pdf::loadView('exportKondisi', compact('kondisi'));
+
+        return $pdf->download('Laporan Kondisi Alat Bermasalah.pdf');
     }
 }

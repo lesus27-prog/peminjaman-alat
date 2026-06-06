@@ -75,13 +75,14 @@
 .btn-universal:hover {
     transform: translateY(-2px) scale(1.02);
     color: black;
+    box-shadow: none !important;
 }
 
 .btn-universal:active {
     transform: scale(0.96);
 }
 
-.btn-universal-back {
+.btn-universal-revert {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -116,7 +117,7 @@ background: linear-gradient(
 );
 }
 
-.btn-universal-back i {
+.btn-universal-revert i {
     width: 22px;
     height: 22px;
 
@@ -129,12 +130,12 @@ background: linear-gradient(
     background: rgba(255, 255, 255, 0.15);
 
     font-size: 13px;
-    font-weight: 900;
+    
 
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
 }
 
-.btn-universal-back::before {
+.btn-universal-revert::before {
     content: "";
     position: absolute;
     top: -50%;
@@ -155,16 +156,22 @@ background: linear-gradient(
     transition: 0.6s;
 }
 
-.btn-universal-back:hover::before {
+.btn-universal-revert:hover::before {
     left: 120%;
     opacity: 1;
 }
 
-.btn-universal-back:hover {
+.btn-universal-revert:hover {
     transform: translateY(-2px) scale(1.02);
     color: black;
 }
 
-.btn-universal-back:active {
+.btn-universal-revert:active {
     transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+.btn-universal{
+    font-size: 11.5px;
+}
 }

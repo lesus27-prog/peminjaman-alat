@@ -79,10 +79,10 @@
                                                 <option value="" disabled selected>--Pilih--</option>
                                                 <option value="x tkj 1">X TKJ 1</option>
                                                 <option value="x tkj 2">X TKJ 2</option>
-                                                <option value="x tkj 3">X TKJ 3</option>
-                                                <option value="x tkj 4">X TKJ 4</option>
-                                                <option value="x tkj 5">X TKJ 5</option>
-                                                <option value="x tkj 6">X TKJ 6</option>
+                                                <option value="xi tkj 1">XI TKJ 1</option>
+                                                <option value="xi tkj 2">XI TKJ 2</option>
+                                                <option value="xii tkj 1">XII TKJ 1</option>
+                                                <option value="xii tkj 2">XII TKJ 2</option>
                                             </select>
                                         </div>
                                     </div>
@@ -92,22 +92,49 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="bi bi-gender-ambiguous"></i></span>
                                             </div>
-                                            <select name="jenis_kelamin" id="jenis-kelamin" required
-                                                class="form-control" style="border-radius: 10px;">
+                                            <select name="jenis_kelamin" id="jenis-kelamin" required class="form-control"
+                                                style="border-radius: 10px;">
                                                 <option value="" disabled selected>--Pilih--</option>
                                                 <option value="laki-laki">Laki-Laki</option>
                                                 <option value="perempuan">Perempuan</option>
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-group mb-3">
+                                        <label for="tahun-masuk">Tahun Masuk</label>
+                                        <div class="input-group mb-0">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i
+                                                        class="bi bi-gender-ambiguous"></i></span>
+                                            </div>
+                                            @php
+                                                $tahunSekarang = date('Y');
+                                            @endphp
+
+                                            <select name="tahun_masuk" id="tahun-masuk" class="form-control" required>
+                                                <option value="" disabled selected>--Pilih--</option>
+
+                                                @for ($i = $tahunSekarang; $i >= $tahunSekarang - 3; $i--)
+                                                    <option value="{{ $i }}">{{ $i }}</option>
+                                                @endfor
+                                            </select>
+                                            {{-- <select name="tahun_masuk" id="tahun-masuk" required class="form-control"
+                                                style="border-radius: 10px;">
+                                                <option value="" disabled selected>--Pilih--</option>
+                                                <option value="2026">2026</option>
+                                                <option value="2025">2025</option>
+                                                <option value="2024">2025</option>
+                                            </select> --}}
+                                        </div>
+                                    </div>
                                     <div class="form-group mt-4 d-flex justify-content-end mb-1 gap-2">
                                         <a href="{{ route('siswa.index') }}" class="btn-action btn-back mr-2">
-                                            <i class="fa fa-times"></i>
+                                            <i class="fa-solid fa-arrow-left"></i>
                                             Batal
                                         </a>
                                         <button type="submit" class="btn btn-universal" id="btn-submit">
-                                            <i class="fa fa-check"></i>
-                                            Submit
+                                            <i class="fa-solid fa-paper-plane"></i>
+                                            Simpan
                                         </button>
                                     </div>
                                 </form>
@@ -124,93 +151,12 @@
 @endsection --}}
 @push('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+     <script src="{{ asset('js/addSiswa.js') }}"></script>
     <script>
         $(document).ready(function() {
-            let timer;
-
-            function checkFormValid() {
-                let nama = $("#nama-siswa").val().trim();
-                let nis = $("#nis").val().trim();
-                let kelas = $("#kelas").val();
-                let jk = $("#jenis-kelamin").val();
-
-                let lengkap =
-                    nama !== "" &&
-                    nis !== "" &&
-                    kelas !== "" &&
-                    jk !== "";
-
-                $("#btn-submit").prop("disabled", !lengkap);
-
-                return lengkap;
-            }
-
-            function setInvalid(msg) {
-                $("#error-nis")
-                    .removeClass("d-none")
-                    .text(msg);
-
-                $("#btn-submit").prop("disabled", true);
-            }
-
-            function setValid() {
-                $("#error-nis")
-                    .addClass("d-none")
-                    .text("");
-
-                checkFormValid();
-            }
-
-            // default disable
-            $("#btn-submit").prop("disabled", true);
-
-            // 🔥 input text
-            $("#nama-siswa, #nis").on("input", function() {
-                checkFormValid();
-            });
-
-            // 🔥 dropdown wajib change
-            $("#kelas, #jenis-kelamin").on("change", function() {
-                checkFormValid();
-            });
-
-            // 🔥 NIS live check
-            $("#nis").on("input", function() {
-                clearTimeout(timer);
-
-                let nis = $(this).val().trim();
-
-                $("#error-nis").addClass("d-none").text("");
-                $("#btn-submit").prop("disabled", true);
-
-                if (nis === "") {
-                    checkFormValid();
-                    return;
-                }
-
-                timer = setTimeout(function() {
-                    $.ajax({
-                        url: "/siswa/check-nis",
-                        method: "POST",
-                        data: {
-                            nis: nis,
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(res) {
-                            if ($("#nis").val().trim() !== nis) return;
-
-                            if (res.exist) {
-                                setInvalid("NIS sudah digunakan");
-                            } else {
-                                setValid();
-                            }
-                        }
-                    });
-                }, 300);
-            });
-            @if (session('error'))
-                toastr.error("{{ session('error') }}", "Terjadi Kesalahan", {
-                    timeOut: 5000, // 5 detik
+            @if (session('store_error'))
+                toastr.error("{{ session('store_error') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
                     progressBar: true,
                     closeButton: true
                 });

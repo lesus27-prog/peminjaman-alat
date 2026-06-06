@@ -16,7 +16,7 @@ class AkunUserController extends Controller
     // ==========================START PART ADMIN================================== //
     public function akunIndex()
     {
-        $akuns = AkunUser::all();
+        $akuns = AkunUser::where('status_akun', 'aktif')->get();
         return view('admin.akun.akunIndex', compact('akuns'));
     }
 
@@ -25,29 +25,29 @@ class AkunUserController extends Controller
         $request->validate([
             'username' => 'required|string|unique:akun_user,username',
             'password' => 'required',
-            'role' => 'required|in:admin,siswa,kabeng',
+            'role' => 'required|in:admin,kabeng',
         ]);
 
         try {
             AkunUser::create([
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
-                'role' => ($request->role),
+                'role' => $request->role,
                 'fcm_token' => null
             ]);
+
             return redirect()
                 ->route('akun.index')
                 ->with('store_success', $request->username);
         } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->with('error', $e->getMessage());
+                ->with('store_error', 'Data gagal ditambahkan');
         }
     }
 
     public function update(Request $request, $idAkunUser)
     {
-        
         $request->validate([
             'username' => [
                 'required',
@@ -57,6 +57,7 @@ class AkunUserController extends Controller
             'password_baru' => 'nullable|string|same:conf_pwd',
             'conf_pwd' => 'nullable|string|same:password_baru'
         ]);
+
         try {
             $akun = AkunUser::findOrFail($idAkunUser);
             $data = [
@@ -73,7 +74,9 @@ class AkunUserController extends Controller
                 ->route('akun.index')
                 ->with('update_success', $akun->username);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('update_error', 'Data gagal diupdate');
         }
     }
 
@@ -81,7 +84,6 @@ class AkunUserController extends Controller
     {
         $query = AkunUser::where('username', $request->username);
 
-        // ignore akun sendiri saat edit
         if ($request->id_akun_user) {
             $query->where('id_akun_user', '!=', $request->id_akun_user);
         }
@@ -95,11 +97,19 @@ class AkunUserController extends Controller
 
     public function delete($idAkunUser)
     {
-        $akun = AkunUser::findOrFail($idAkunUser);
-        $akun->delete();
-        return redirect()
-            ->back()
-            ->with('delete_success', $akun->username);
+        try {
+            $akun = AkunUser::findOrFail($idAkunUser);
+            $username = $akun->username;
+            $akun->delete();
+
+            return redirect()
+                ->back()
+                ->with('delete_success', $username);
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('delete_error', 'Data gagal dihapus');
+        }
     }
 
     public function exportPdf(Request $request)
@@ -113,7 +123,6 @@ class AkunUserController extends Controller
         $pdf = Pdf::loadView('admin.akun.exportPdf', compact('akuns'));
         return $pdf->download('Data Akun User.pdf');
     }
-
     // ==========================END PART ADMIN================================== //
 
 
@@ -134,15 +143,18 @@ class AkunUserController extends Controller
 
         try {
             $akun = AkunUser::findOrFail($idAkunUser);
-            $username = str_replace(' ', '', $request->username_baru);
+
             $akun->update([
-                'username' => $username
+                'username' => $request->username
             ]);
+
             return redirect()
                 ->back()
                 ->with('update_success', 'Username berhasil diubah');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()
+                ->back()
+                ->with('update_error', 'Username gagal diubah!');
         }
     }
 
@@ -155,16 +167,19 @@ class AkunUserController extends Controller
 
         try {
             $akun = AkunUser::findOrFail($idAkunUser);
+
             $akun->update([
                 'password' => Hash::make($request->password_baru)
             ]);
+
             return redirect()
                 ->back()
                 ->with('update_success', 'Password berhasil diubah');
         } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->with('error', $e->getMessage());
+                ->with('update_error', 'Password gagal diubah!');
         }
     }
+    // ==========================END PART SISWA================================== //
 }

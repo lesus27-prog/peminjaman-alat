@@ -26,7 +26,7 @@ class AuthController extends Controller
         $user = Auth::user();
         if ($user->status_akun == 'nonaktif') {
             Auth::logout();
-            return 'Akun tidak aktif';
+            return back()->with('error', 'Akun tidak aktif');
         }
 
         switch ($user->role) {

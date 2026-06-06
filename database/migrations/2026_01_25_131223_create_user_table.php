@@ -40,6 +40,7 @@ return new class extends Migration
                 'perempuan',
                 'laki-laki'
             ]);
+             $table->string('tahun_masuk', 4);
             $table->timestamps();
         });
     }

@@ -1,6 +1,5 @@
 select:invalid {
     color: #72797f;
-    /* abu-abu */
 }
 
 select option {
@@ -284,7 +283,7 @@ body.grid-mode .icon-grid {
     height: 20px !important;
 
     top: 2px !important;
-    left: 2px !important;
+    /* left: 2px !important; */
 
     background: #ffffff !important;
 
@@ -482,7 +481,7 @@ body.grid-mode .icon-grid {
 
     /* box-shadow: 0 12px 25px rgba(99, 102, 241, 0.25); */
 
-    transition: all 0.25s ease;
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* glow sweep effect */
@@ -512,7 +511,7 @@ body.grid-mode .icon-grid {
 
 #view-card .btn-custom:hover,
 #view-table .btn-custom:hover {
-    transform: translateY(-2px) scale(1.02);
+    transform: translateY(-2px);
 }
 
 /* =========================
@@ -567,15 +566,15 @@ body.grid-mode .icon-grid {
 .card-input {
     border-radius: 22px;
     background-color: white;
-    transition: transform 0.35s ease;
+    /* transition: transform 0.35s ease; */
     /* box-shadow:
         0 3.5px 4px rgba(224, 224, 224, 0.8),
         0 1.5px 2px rgb(224, 224, 224, 0.8); */
 }
 
-.card-input:hover {
-    transform: translateY(-5px) scale(1.01);
-}
+/* .card-input:hover {
+    transform: translateY(-2px) ;
+} */
 
 .box-ketersediaan {
     padding: 39px;
@@ -590,11 +589,6 @@ body.grid-mode .icon-grid {
         0 1.5px 2px rgb(224, 224, 224, 0.8); */
     position: relative;
     overflow: hidden;
-    transition: transform 0.35s ease;
-}
-
-.box-ketersediaan:hover {
-    transform: translateY(-5px) scale(1.01);
 }
 
 /* .box-ketersediaan {
@@ -635,8 +629,8 @@ body.grid-mode .icon-grid {
 }
 
 /* info header tetap konsisten */
-#info-Tanggal-Jam {
-    padding: 10px 14px;
+#info-Tanggal-jam {
+    padding: 8px 12px;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.6);
     border: 1px solid rgba(226, 232, 240, 0.8);
@@ -694,13 +688,11 @@ body.grid-mode .icon-grid {
     flex-direction: column;
 }
 
-
 .scroll-alat {
     max-height: 450px;
     overflow-y: auto;
     overflow-x: hidden;
 }
-
 
 .scroll-alat thead th {
     position: sticky;
@@ -716,14 +708,21 @@ body.grid-mode .icon-grid {
 /* INPUT BIASA */
 .form-input {
     background: #eeeff5c9 !important;
-    border: 0.5px solid #9fabbc96;
+    border: none !important;
+    /* border: 0.5px solid #9fabbc96; */
     border-radius: 11px;
+}
+#jam-mulai {
+    font-weight: 500;
+    color: #7a8083;
+    font-size: 13px;
 }
 
 /* SELECT2 */
 .select2-container--default .select2-selection--single {
     background: #eeeff5c9 !important;
-    border: 0.5px solid #9fabbc96;
+    border: none !important;
+    /* border: 0.5px solid #9fabbc96; */
     border-radius: 11px;
 }
 
@@ -788,7 +787,8 @@ body.grid-mode .icon-grid {
 }
 
 .box-ketersediaan {
-    display: none;
+    /* display: none; */
+    display: block;
 }
 .box-ketersediaan.active {
     display: block;
@@ -822,7 +822,7 @@ body.grid-mode .icon-grid {
     background: #f0fdf4;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 768px) {
     .pd-ltr-20 {
         padding: 5px;
     }
@@ -846,8 +846,9 @@ body.grid-mode .icon-grid {
     }
 
     #btn-cari {
-        margin-right: 0 !important;
-        margin-top: 5px;
+        margin-right: 0;
+        margin-bottom: 14px !important;
+        margin-top: 12px;
     }
     .input-group {
         margin-bottom: 0;
@@ -869,14 +870,6 @@ body.grid-mode .icon-grid {
         padding: 0 10px !important;
     }
 
-    .status-pill {
-        padding: 4px 8px;
-    }
-
-    .box-search {
-        margin-top: 20px;
-    }
-
     .box-alat-card {
         padding: 0;
     }
@@ -885,7 +878,7 @@ body.grid-mode .icon-grid {
         padding: 15px;
     }
 
-       .modal-detail .modal-dialog {
+    .modal-detail .modal-dialog {
         margin: 0;
         max-width: 100%;
         height: 100vh;
@@ -910,18 +903,156 @@ body.grid-mode .icon-grid {
         overflow: visible;
     }
 
-    .modal-footer{
+    .modal-footer {
         padding: 0 20px 24px;
     }
 
     .modal-footer .btn {
         width: 100%;
-        
     }
 
-    .btn-back{
+    .btn-back {
         margin-bottom: 5px;
     }
 
+    #info-tanggal-jam i {
+        font-size: 18px;
+    }
 
+    span.title {
+        font-size: 10px !important;
+    }
+
+    #info-tanggal-jam {
+        padding: 6px 9px;
+    }
+    .chip {
+        font-size: 9px;
+        padding: 3px 8px;
+    }
+
+    .box-search {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    #searchInput {
+        padding: 2px 0px 2px 40px;
+        height: 35px !important;
+    }
+
+    .search-wrapper {
+        margin-bottom: 0;
+    }
+
+    .status-pill {
+        font-size: 10px;
+        padding: 2px 8px;
+    }
+
+    .box-waktu-pakai {
+        padding: 0 !important;
+    }
+
+    .flex-shrink-0 .img-tipe {
+        width: 30px !important;
+        height: 30px !important;
+    }
+
+    .btn-pinjam,
+    .btn-next,
+    .btn-next i {
+        font-size: 11.5px !important;
+    }
+
+    .btn-next {
+        padding: 8px 14px;
+        border-radius: 15px;
+    }
+
+    .jam-pakai {
+        margin-top: 10px;
+    }
+
+    .search-box-wrapper::placeholder {
+        font-size: 11.5px !important;
+    }
+
+    .view-toggle {
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 10px;
+    }
+
+    .view-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+
+    .switchery {
+        width: 36px !important;
+        height: 20px !important;
+    }
+
+    .switchery small {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+
+#modal-detail-peminjaman .modal-dialog {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#modal-detail-peminjaman.show .modal-dialog {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.view-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 3px 5px;
+
+    background: #fff;
+
+    border-radius: 12px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.view-icon {
+    font-size: 18px;
+    color: #9ca3af;
+    transition: all 0.25s ease;
+}
+
+.view-icon.active {
+    color: #22c55e;
+    transform: scale(1.08);
+}
+
+.view-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    background: rgba(192, 200, 194, 0.12);
+    color: #94a3b8;
+    transition: all 0.25s ease;
+}
+
+.view-icon.active {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
 }

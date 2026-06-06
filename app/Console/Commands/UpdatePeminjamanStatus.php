@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Peminjaman;
 use App\Services\PeminjamanService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class UpdatePeminjamanStatus extends Command
 {
@@ -14,11 +13,6 @@ class UpdatePeminjamanStatus extends Command
 
     public function handle(PeminjamanService $service)
     {
-        Log::info('RUN COMMAND', [
-            'command' => __CLASS__,
-            'pid' => getmypid(),
-            'time' => now()->format('H:i:s.u')
-        ]);
         Peminjaman::whereNotIn('status_pinjam', [
             'batal',
             'selesai',

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('peminjaman:update-status')
     ->everyMinute();
+// ->between('11:25', '15:00');
 Schedule::command('peminjaman:reminder')
     ->everyMinute();
 

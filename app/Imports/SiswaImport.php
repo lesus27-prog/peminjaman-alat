@@ -18,7 +18,8 @@ class SiswaImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             empty($row['nis']) ||
             empty($row['nama']) ||
             empty($row['kelas']) ||
-            empty($row['jenis_kelamin'])
+            empty($row['jenis_kelamin'])||
+            empty($row['tahun_masuk'])
         ) {
             return null;
         }
@@ -43,6 +44,7 @@ class SiswaImport implements ToModel, WithHeadingRow, SkipsEmptyRows
                 'nis' => $row['nis'],
                 'kelas' => strtolower($row['kelas']),
                 'jenis_kelamin' => strtolower($row['jenis_kelamin']),
+                'tahun_masuk' => strtolower($row['tahun_masuk']),
             ]);
         }
 
@@ -53,13 +55,15 @@ class SiswaImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             'nama_siswa' => strtolower($row['nama']),
             'kelas' => strtolower($row['kelas']),
             'jenis_kelamin' => strtolower($row['jenis_kelamin']),
+            'tahun_masuk' => strtolower($row['tahun_masuk']),
         ]);
 
         // update akun jika relasi ada
-        if ($siswa->akun) {
-            $siswa->akun->update([
+        if ($siswa->akunUser) {
+            $siswa->akunUser->update([
                 'username' => (string) $row['nis'],
                 'password' => Hash::make($row['nis']),
+                'status_akun' => 'aktif',
             ]);
         }
 

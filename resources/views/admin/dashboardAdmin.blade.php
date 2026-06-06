@@ -3,13 +3,14 @@
     {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/content.css') }}">
     <link rel="stylesheet" href="{{ asset('css/universal.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/table.css') }}">
     <link rel="stylesheet" href="{{ asset('css/button.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/table.css') }}">
 @endsection
 @section('content')
     <div class="pd-ltr-20 xs-pd-20-10">
@@ -29,7 +30,7 @@
                         <i class="fa-solid fa-screwdriver-wrench"></i>
                     </div>
                     <div class="stat-info">
-                        <p>Total Alat</p>
+                        <p>Alat Layak Pakai</p>
                         <h3 class="counter" data-target={{ $alat }}>{{ $alat }}</h3>
                     </div>
                 </div>
@@ -55,8 +56,8 @@
 
             </div>
 
-            <div class="row g-3">
-                <div class="col-md-7 mb-0">
+            <div class="row g-3 m-0">
+                <div class="col-md-7 mb-0 px-2 box-chart">
                     <div class="pd-20 card-kondisi card-box">
                         <h4 class="h4 text-dark d-flex align-items-center gap-2">
                             Distribusi Kondisi Alat
@@ -69,7 +70,8 @@
                         <hr class="m-0">
 
                         <div class="table-responsive">
-                            <table class="data-table table hover multiple-select-row py-0 px-1 border-0">
+                            <table class="data-table table hover multiple-select-row py-0 px-2 border-0"
+                                style="background: #e9edf9b1 !important; border-radius: 22px;">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
@@ -91,7 +93,7 @@
 
                     </div>
                 </div>
-                <div class="col-md-5 mb-0 px-2">
+                <div class="col-md-5 mb-0 px-2 box-permintaan">
                     <div class="pd-20 card-box height-100-p booking-card">
 
                         <h4 class="h4 text-dark d-flex align-items-center gap-2">
@@ -109,7 +111,7 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <label class="form-label invisible">Cari</label>
+
                                     <button type="button" id="btn-booking-search" class="btn btn-universal w-100 p-1">
                                         <i class="fa fa-search"></i> Search
                                     </button>
@@ -158,7 +160,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label invisible">Cari</label>
+
                             <button id="btn-tracking-search" class="btn btn-universal w-100 p-1" type="button">
                                 <i class="fa fa-search"></i>Search
                             </button>
@@ -174,7 +176,7 @@
                     <!-- TABLE (hidden awal) -->
                     <div class="table-wrapper d-none" id="track-table-wrapper">
 
-                        <table class="data-table table hover multiple-select-row py-0 px-3 border-0">
+                        <table class="data-table table hover multiple-select-row py-0 px-2 border-0"     style="background: #e9edf9b1 !important; border-radius: 22px;">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -183,6 +185,7 @@
                                     <th>Tanggal Pinjam</th>
                                     <th>Keterlambatan</th>
                                     <th>Kondisi Kembali</th>
+                                    <th>Catatan</th>
                                 </tr>
                             </thead>
 
@@ -191,23 +194,26 @@
 
                     </div>
 
-                    <!-- EMPTY STATE -->
                     <div class="text-center py-5 empty-state" id="track-empty">
 
-                        <div style="font-size: 55px;">🧭</div>
+                        <div style="font-size: 55px;">🔎</div>
 
-                        <h5 class="mt-3 text-dark">
-                            Lacak Alatmu
+                        <h5 class="mt-3" style="color: #296087;">
+                            Lacak Alat
                         </h5>
 
-                        <p class="text-muted mb-1">
-                            Ketik kode alat untuk mulai pencarian
+                        <p class="text-muted mb-0" style="font-size: 13px; font-weight: 500;">
+                            Masukkan kode alat untuk mulai pencarian
                         </p>
-
-                        <small class="text-muted">
-                            Contoh: ALAT-001, MULTI-02, DLL
-                        </small>
-
+                    </div>
+                    <!-- LOADING SPINNER -->
+                    <div class="text-center py-5 d-none" id="track-loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p class="mt-2" style="font-size: 13px;">
+                            Mencari data...
+                        </p>
                     </div>
                 </div>
 
@@ -246,11 +252,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer justify-content-between">
-                    <button class="btn btn-light btn-back"><i
-                                    class="bi bi-arrow-counterclockwise"></i>Reset</button>
+                <div class=" footer modal-footer justify-content-between">
+                    <button class="btn btn-light btn-back"><i class="bi bi-arrow-counterclockwise"></i>Reset</button>
                     <button class="btn btn-primary btn-universal" id="apply-filter"><i
-                                    class="bi bi-check2-circle"></i>Terapkan</button>
+                            class="bi bi-check2-circle"></i>Terapkan</button>
                 </div>
             </div>
         </div>
@@ -261,12 +266,13 @@
     <script src="{{ asset('deskap/vendors/scripts/apexcharts-setting.js') }}"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         window.summary = @json($summary);
         window.detail = @json($detail);
     </script>
-    <script src="{{asset('js/dashboard.js')}}"></script>
-    <script src="{{asset('js/dashboardAdmin.js')}}"></script>
+    <script src="{{ asset('js/dashboard.js') }}"></script>
+    <script src="{{ asset('js/dashboardAdmin.js') }}"></script>
     {{-- <script>
         let summary = @json($summary);
         let detail = @json($detail);

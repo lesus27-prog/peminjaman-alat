@@ -32,18 +32,8 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon bg-orange">
-
-                        <i class="bi bi-ui-checks"></i>
-                    </div>
-                    <div class="stat-info">
-                        <p>Peminjaman Aktif</p>
-                        <h3 class="counter" data-target={{ $peminjamanAktif }}>{{ $peminjamanAktif }}</h3>
-                    </div>
-                </div>
-                <div class="stat-card">
                     <div class="stat-icon bg-red">
-                      <i class="fa-solid fa-hourglass-half"></i>
+                        <i class="fa-solid fa-hourglass-half"></i>
                     </div>
                     <div class="stat-info">
                         <p>Proses Pengembalian</p>
@@ -64,78 +54,35 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
-    <script>
+    {{-- <script>
         $(document).ready(function() {
-
-
-            // // ===== COUNTER =====
-            // function animateCounter($counter) {
-            //     const target = +$counter.data("target");
-            //     const duration = 1200;
-            //     const startTime = performance.now();
-
-            //     function animate(time) {
-            //         const progress = Math.min((time - startTime) / duration, 1);
-            //         const ease = 1 - Math.pow(1 - progress, 3);
-
-            //         const value = Math.floor(ease * target);
-            //         $counter.text(value.toLocaleString("id-ID"));
-
-            //         if (progress < 1) {
-            //             requestAnimationFrame(animate);
-            //         } else {
-            //             $counter.text(target.toLocaleString("id-ID"));
-            //         }
-            //     }
-
-            //     requestAnimationFrame(animate);
-            // }
-
-            // // ===== INTERSECTION OBSERVER =====
-            // const observer = new IntersectionObserver(entries => {
-            //     entries.forEach(entry => {
-            //         if (entry.isIntersecting) {
-
-            //             const $counter = $(entry.target).find(".counter");
-
-            //             if (!$(entry.target).hasClass("animated")) {
-            //                 animateCounter($counter);
-            //                 $(entry.target).addClass("animated");
-            //             }
-
-            //         }
-            //     });
-            // }, {
-            //     threshold: 0.6
-            // });
-
-            // $(".stat-card").each(function() {
-            //     observer.observe(this);
-            // });
-
-
-
             if ('serviceWorker' in navigator) {
+
                 navigator.serviceWorker.register('/firebase-messaging-sw.js')
                     .then(async (registration) => {
 
                         const permission = await Notification.requestPermission();
-                        if (permission !== "granted") return;
+
+                        if (permission !== "granted") {
+                            console.log("Permission ditolak");
+                            return;
+                        }
 
                         const token = await messaging.getToken({
                             vapidKey: 'BBmW3STkh775-ucf4qPMjejnfY53u0IT18CEXL0puloM3ACQ0zD4sYpvP_4V_klPPgIOSbwCusefroph47RXx-k',
                             serviceWorkerRegistration: registration
                         });
 
-                        if (!token) return;
+                        if (!token) {
+                            console.log("Token kosong");
+                            return;
+                        }
 
                         console.log("FCM TOKEN:", token);
 
-                        return fetch('/save-token', {
+                        await fetch('/save-token', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -151,7 +98,47 @@
                     })
                     .catch(console.error);
             }
+
+            // if ('serviceWorker' in navigator) {
+            //     navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            //         // navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            //         .then(async (registration) => {
+
+            //             const permission = await Notification.requestPermission();
+            //             if (permission !== "granted") {
+            //                 console.log("Permission ditolak");
+            //                 return;
+            //             }
+
+            //             const token = await messaging.getToken({
+            //                 vapidKey: 'BBmW3STkh775-ucf4qPMjejnfY53u0IT18CEXL0puloM3ACQ0zD4sYpvP_4V_klPPgIOSbwCusefroph47RXx-k',
+            //                 serviceWorkerRegistration: registration
+            //             });
+
+            //             if (!token) {
+            //                 console.log("Token kosong");
+            //                 return;
+            //             }
+
+            //             console.log("FCM TOKEN:", token);
+
+            //             return fetch('/save-token', {
+            //                 method: 'POST',
+            //                 headers: {
+            //                     'Content-Type': 'application/json',
+            //                     'X-CSRF-TOKEN': document
+            //                         .querySelector('meta[name="csrf-token"]')
+            //                         .getAttribute('content')
+            //                 },
+            //                 body: JSON.stringify({
+            //                     token
+            //                 })
+            //             });
+
+            //         })
+            //         .catch(console.error);
+            // }
         });
-    </script>
+    </script> --}}
     <script src="{{ asset('js/dashboard.js') }}"></script>
 @endpush

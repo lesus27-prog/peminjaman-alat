@@ -9,19 +9,11 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 
+
 class PeminjamanService
 {
     public function updateStatus(Peminjaman $peminjaman)
     {
-        if (in_array($peminjaman->status_pinjam, [
-            'batal',
-            'selesai',
-            'aktif',
-            'proses pengembalian'
-        ])) {
-            return;
-        }
-
         $waktuPakai = CarbonImmutable::parse(
             $peminjaman->tanggal_mulai . ' ' . $peminjaman->jam_mulai
         );
@@ -44,8 +36,7 @@ class PeminjamanService
 
         if ($peminjaman->status_pinjam !== $statusBaru) {
 
-            $peminjaman->status_pinjam = $statusBaru;
-            $peminjaman->save();
+            $peminjaman->update(['status_pinjam' => $statusBaru]);
 
             if ($statusBaru === 'siap diambil') {
 
@@ -55,7 +46,8 @@ class PeminjamanService
                     FCMService::send(
                         $token,
                         "Alat Siap Diambil",
-                        "Silakan ambil alat yang kamu pinjam"
+                        "Silakan ambil alat yang kamu pinjam",
+                        3600
                     );
                 }
             }
@@ -64,68 +56,71 @@ class PeminjamanService
 
     public function checkReminder(Peminjaman $peminjaman)
     {
-        if (in_array($peminjaman->status_pinjam, [
-            'batal',
-            'selesai',
-            'menunggu',
-            'siap diambil',
-            'proses_pengembalian'
-        ])) {
+        if ($peminjaman->is_reminder_sent) {
             return;
         }
-
-        $sekarang = now();
 
         $batas = Carbon::parse(
             $peminjaman->tanggal_selesai . ' ' . $peminjaman->jam_selesai
         );
 
-        $reminder = $batas->copy()->subMinutes(10);
-        $reminderEnd = $reminder->copy()->addMinute();
+        $sekarang = now();
 
-        if ($sekarang >= $reminder && $sekarang < $reminderEnd) {
+        $sisaMenit = $sekarang->diffInMinutes($batas, false);
 
-            $token = $peminjaman->siswa?->akunUser?->fcm_token;
+        if ($sisaMenit <= 0 || $sisaMenit > 10) {
+            return;
+        }
 
-            if ($token) {
-                FCMService::send(
-                    $token,
-                    "Reminder Pengembalian",
-                    "10 menit lagi waktu peminjaman habis"
-                );
-            }
+        $sisaMenit = round($sisaMenit);
+
+        $token = $peminjaman->siswa?->akunUser?->fcm_token;
+        if (!$token) {
+            return;
+        }
+
+        $result = false;
+
+
+        $result = FCMService::send(
+            $token,
+            "Reminder Pengembalian",
+            "{$sisaMenit} menit lagi waktu peminjaman habis",
+            600
+        );
+
+
+        if ($result) {
+            $peminjaman->update([
+                'is_reminder_sent' => true
+            ]);
         }
     }
 
-    public function storePinjamTipe($request, AlatService $alatService)
+    public function prosesPesanAlat($request, AlatService $alatService)
     {
-        // 1. CEK KETERSEDIAAN DULU (INI KUNCINYA)
         $check = $alatService->check($request->tanggal_mulai, $request->jam_mulai);
-
-        $jamMulai = $request->jam_mulai;
-
         $alat = $request->input('alat');
 
         foreach ($alat as $item) {
-
             $idTipe = $item['id'];
             $qty = $item['jumlah'];
 
-            // stok pada jam itu
             $stokTersisa = $check[$idTipe] ?? 0;
 
             if ($qty > $stokTersisa) {
-                throw new \Exception("Stok tidak cukup untuk tipe alat ID: {$idTipe} pada jam {$jamMulai}");
+                throw new \Exception();
             }
         }
 
-        // 2. kalau lolos baru CREATE
         $peminjaman = Peminjaman::create([
             'id_siswa' => Auth::user()->siswa->id_siswa,
             'tanggal_mulai' => $request->tanggal_mulai,
             'jam_mulai' => $request->jam_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'jam_selesai' => $request->jam_selesai,
+            'is_reminder_sent' => false,
+            'kelas_siswa' => Auth::user()->siswa->kelas
         ]);
 
         $data = [];
@@ -141,7 +136,7 @@ class PeminjamanService
         return $peminjaman;
     }
 
-    public function storePinjamDetail($request, $idPinjam)
+    public function prosesScanPeminjaman($request, $idPinjam)
     {
         $peminjaman = Peminjaman::findOrFail($idPinjam);
 
@@ -174,11 +169,11 @@ class PeminjamanService
         return $peminjaman;
     }
 
-    public function scanQr($kode)
+    public function externalScanQr($kode)
     {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
+        // if (!Auth::check()) {
+        //     return redirect()->route('login');
+        // }
 
         $alat = DetailAlat::where('kode_alat', $kode)->firstOrFail();
         $idSiswa = Auth::user()->siswa->id_siswa;
@@ -197,30 +192,13 @@ class PeminjamanService
                 'kode' => $kode
             ]);
         }
-        // $peminjamanAktif = Peminjaman::where('status_pinjam', 'aktif')
-        //     ->whereHas('detailAlat', function ($q) use ($alat) {
-        //         $q->where('detail_alat.id_detail_alat', $alat->id_detail_alat);
-        //     })
-        //     ->latest('id_pinjam')
-        //     ->first();
-
-        // if ($peminjamanAktif) {
-
-        //     if ($peminjamanAktif->id_siswa != $idSiswa) {
-        //         return redirect()->route('peminjamanSiswa.index')
-        //             ->with('error', 'Alat tidak tersedia');
-        //     }
-
-        //     return redirect()->route('peminjamanSiswa.index')
-        //         ->with('error', 'Peminjaman sedang berjalan');
-        // }
 
         $peminjaman = Peminjaman::where('id_siswa', $idSiswa)
             ->whereIn('status_pinjam', ['menunggu', 'siap diambil'])
             ->whereHas('tipeAlat', function ($q) use ($alat) {
                 $q->where('tipe_alat.id_tipe', $alat->id_tipe);
             })
-            ->latest('id_pinjam')
+            ->oldest('id_pinjam')
             ->first();
 
         if (!$peminjaman) {
@@ -240,12 +218,10 @@ class PeminjamanService
             ]);
         }
 
-
-
         return redirect()->route('alat.index');
     }
 
-    public function scanKembali($request, $idPinjam)
+    public function prosesScanPengembalian($request, $idPinjam)
     {
         $peminjaman = Peminjaman::with('detailAlat')->findOrFail($idPinjam);
 
@@ -280,8 +256,8 @@ class PeminjamanService
 
             $idAlat = $alat->id_detail_alat;
 
-            $kondisi = $request->kondisi_kembali[$idAlat] ?? 'baik';
-            $catatan = $request->catatan[$idAlat] ?? null;
+            $kondisi = $request->input("kondisi_kembali.$idAlat", 'baik');
+            $catatan = $request->input("catatan.$idAlat");
 
             $status = $kondisi === 'baik' ? 'tersedia' : 'tidak tersedia';
 
@@ -290,7 +266,9 @@ class PeminjamanService
                 'kondisi_kembali' => $kondisi,
                 'catatan' => $catatan,
                 'tanggal_pengembalian' => now(),
-                'is_terlambat' => now()->greaterThan($peminjaman->tanggal_selesai)
+                'is_terlambat' => now()->greaterThan(
+                    \Carbon\Carbon::parse($peminjaman->tanggal_selesai . ' ' . $peminjaman->jam_selesai)
+                )
             ]);
 
             $alat->update([

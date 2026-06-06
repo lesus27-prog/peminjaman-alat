@@ -172,8 +172,4 @@ $(document).ready(function () {
         $("#btn-submit").prop("disabled", true);
     });
 
-    window.exportPdf = function () {
-        let url = "/export-jenis";
-        window.open(url, "_blank");
-    };
 });
