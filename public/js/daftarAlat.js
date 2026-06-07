@@ -252,95 +252,131 @@ $(document).ready(function () {
 
             success: function (response) {
                 console.log(response);
-                $(".btn-pinjam").each(function () {
-                    let jamKey = jamMulai;
-                    let id = parseInt($(this).data("id"));
+                if ($(".btn-pinjam").length > 0) {
+                    $(".btn-pinjam").each(function () {
+                        let jamKey = jamMulai;
+                        let id = parseInt($(this).data("id"));
 
-                    let stokTersedia = response[id] ?? 0;
+                        let stokTersedia = response[id] ?? 0;
 
-                    let row = $(this).closest("tr");
-                    let card = $('.alat-card[data-id="' + id + '"]');
+                        let row = $(this).closest("tr");
+                        let card = $('.alat-card[data-id="' + id + '"]');
 
-                    // Cache element
-                    let rowJumlah = row.find(".jumlah");
-                    let cardJumlah = card.find(".jumlah");
+                        // Cache element
+                        let rowJumlah = row.find(".jumlah");
+                        let cardJumlah = card.find(".jumlah");
 
-                    let rowStok = row.find(".stok-tersedia");
-                    let cardStok = card.find(".stok-tersedia");
+                        let rowStok = row.find(".stok-tersedia");
+                        let cardStok = card.find(".stok-tersedia");
 
-                    let rowBtnControl = row.find(".btn-tambah, .btn-kurang");
-                    let cardBtnControl = card.find(".btn-tambah, .btn-kurang");
+                        let rowBtnControl = row.find(
+                            ".btn-tambah, .btn-kurang",
+                        );
+                        let cardBtnControl = card.find(
+                            ".btn-tambah, .btn-kurang",
+                        );
 
-                    let cardBtnPinjam = card.find(".btn-pinjam");
+                        let cardBtnPinjam = card.find(".btn-pinjam");
 
-                    // Update jumlah
-                    rowJumlah
-                        .attr("data-stok", stokTersedia)
-                        .val(stokTersedia > 0 ? 1 : 0);
+                        // Update jumlah
+                        rowJumlah
+                            .attr("data-stok", stokTersedia)
+                            .val(stokTersedia > 0 ? 1 : 0);
 
-                    cardJumlah
-                        .attr("data-stok", stokTersedia)
-                        .val(stokTersedia > 0 ? 1 : 0);
+                        cardJumlah
+                            .attr("data-stok", stokTersedia)
+                            .val(stokTersedia > 0 ? 1 : 0);
 
-                    // Update stok text
-                    let stokText =
-                        stokTersedia > 0
-                            ? "Tersedia : " + stokTersedia
-                            : "Tidak Tersedia";
+                        // Update stok text
+                        let stokText =
+                            stokTersedia > 0
+                                ? "Tersedia : " + stokTersedia
+                                : "Tidak Tersedia";
 
-                    let stokClassRemove =
-                        stokTersedia > 0 ? "empty" : "available";
+                        let stokClassRemove =
+                            stokTersedia > 0 ? "empty" : "available";
 
-                    let stokClassAdd = stokTersedia > 0 ? "available" : "empty";
+                        let stokClassAdd =
+                            stokTersedia > 0 ? "available" : "empty";
 
-                    rowStok
-                        .removeClass(stokClassRemove)
-                        .addClass(stokClassAdd)
-                        .text(stokText);
+                        rowStok
+                            .removeClass(stokClassRemove)
+                            .addClass(stokClassAdd)
+                            .text(stokText);
 
-                    cardStok
-                        .removeClass(stokClassRemove)
-                        .addClass(stokClassAdd)
-                        .text(stokText);
+                        cardStok
+                            .removeClass(stokClassRemove)
+                            .addClass(stokClassAdd)
+                            .text(stokText);
 
-                    // Kondisi stok habis
-                    if (stokTersedia <= 0) {
-                        $(this)
-                            .prop("disabled", true)
-                            .removeClass("btn-custom")
-                            .addClass("btn-secondary")
-                            .text("Habis");
+                        // Kondisi stok habis
+                        if (stokTersedia <= 0) {
+                            $(this)
+                                .prop("disabled", true)
+                                .removeClass("btn-custom")
+                                .addClass("btn-secondary")
+                                .text("Habis");
 
-                        cardBtnPinjam
-                            .prop("disabled", true)
-                            .removeClass("btn-custom")
-                            .addClass("btn-secondary")
-                            .text("Habis");
+                            cardBtnPinjam
+                                .prop("disabled", true)
+                                .removeClass("btn-custom")
+                                .addClass("btn-secondary")
+                                .text("Habis");
 
-                        rowBtnControl.prop("disabled", true);
-                        cardBtnControl.prop("disabled", true);
+                            rowBtnControl.prop("disabled", true);
+                            cardBtnControl.prop("disabled", true);
 
-                        card.addClass("disabled-card");
-                    } else {
-                        $(this)
-                            .prop("disabled", false)
-                            .removeClass("btn-secondary")
-                            .addClass("btn-custom")
-                            .text("Pinjam");
+                            card.addClass("disabled-card");
+                        } else {
+                            $(this)
+                                .prop("disabled", false)
+                                .removeClass("btn-secondary")
+                                .addClass("btn-custom")
+                                .text("Pinjam");
 
-                        cardBtnPinjam
-                            .prop("disabled", false)
-                            .removeClass("btn-secondary")
-                            .addClass("btn-custom")
-                            .text("Pinjam");
+                            cardBtnPinjam
+                                .prop("disabled", false)
+                                .removeClass("btn-secondary")
+                                .addClass("btn-custom")
+                                .text("Pinjam");
 
-                        rowBtnControl.prop("disabled", false);
-                        cardBtnControl.prop("disabled", false);
+                            rowBtnControl.prop("disabled", false);
+                            cardBtnControl.prop("disabled", false);
 
-                        card.removeClass("disabled-card");
-                    }
-                });
+                            card.removeClass("disabled-card");
+                        }
+                    });
+                } else {
+                    // HALAMAN ADMIN
+                    $(".alat-table").each(function () {
+                        let id = parseInt($(this).data("id"));
+                        let stokTersedia = response[id] ?? 0;
 
+                        let rowStok = $(this).find(".stok-tersedia");
+
+                        let cardStok = $(
+                            '.alat-card[data-id="' + id + '"]',
+                        ).find(".stok-tersedia");
+
+                        let stokText =
+                            stokTersedia > 0
+                                ? "Tersedia : " + stokTersedia
+                                : "Tidak Tersedia";
+
+                        let statusClass =
+                            stokTersedia > 0 ? "available" : "empty";
+
+                        rowStok
+                            .removeClass("available empty")
+                            .addClass(statusClass)
+                            .text(stokText);
+
+                        cardStok
+                            .removeClass("available empty")
+                            .addClass(statusClass)
+                            .text(stokText);
+                    });
+                }
                 $("#box-ketersediaan").addClass("active").slideDown(400);
 
                 $("html, body").animate(

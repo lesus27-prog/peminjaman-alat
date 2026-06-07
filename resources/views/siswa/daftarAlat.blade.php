@@ -72,9 +72,10 @@
                                 <option value="11:30:00">11:30</option>
                                 <option value="12:00:00">12:00</option>
                                 <option value="13:45:00">13:45</option>
-                                <option value="14:30:00">16:47</option>
+                                <option value="14:30:00">14:30</option>
                                 <option value="15:15:00">15:15</option>
-                                <option value="14:58:00">14:48</option>
+                                <option value="00:01:00">00:01</option>
+                                <option value="00:40:00">00:40</option>
                             </select>
                         </div>
                     </div>
@@ -344,13 +345,12 @@
                                         <option value="10:00:00">10:00</option>
                                         <option value="10:45:00">10:45</option>
                                         <option value="11:30:00">11:30</option>
-                                        <option value="12:15:00">12:15</option>
-                                        <option value="17:37:00">17:37</option>
-                                        <option value="13:00:00">13:00</option>
-                                        <option value="14:05:00">14:47</option>
-                                        <option value="15:26:00">15:26</option>
+                                        <option value="12:00:00">12:00</option>
+                                        <option value="13:45:00">13:45</option>
+                                        <option value="14:30:00">14:30</option>
                                         <option value="15:15:00">15:15</option>
-                                        <option value="10:15:00">10:15</option>
+                                        <option value="00:01:00">00:01</option>
+                                        <option value="00:40:00">00:40</option>
                                     </select>
                                 </div>
                             </div>
