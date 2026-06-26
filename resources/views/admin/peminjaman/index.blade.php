@@ -96,6 +96,7 @@
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
+                                                <th>ID Peminjaman</th>
                                                 <th>Nama Siswa</th>
                                                 <th>Kelas</th>
                                                 <th>Tanggal Pemakaian</th>
@@ -111,6 +112,7 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
+                                                    <td>PJM-0{{ $item->id_pinjam }}</td>
                                                     <td>{{ ucwords($item->siswa->nama_siswa) }}</td>
                                                     <td>{{ strtoupper($item->siswa->kelas) }}</td>
                                                     <td>{{ $item->tanggalPemakaianFormat() }}</td>
@@ -187,6 +189,7 @@
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
+                                                <th>ID Peminjaman</th>
                                                 <th>Nama Siswa</th>
                                                 <th>Kelas</th>
                                                 <th>Tanggal Pemakaian</th>
@@ -202,6 +205,7 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
+                                                    <td>PJM-0{{ $item->id_pinjam }}</td>
                                                     <td>{{ ucwords($item->siswa->nama_siswa) }}</td>
                                                     <td>{{ strtoupper($item->siswa->kelas) }}</td>
                                                     <td>{{ $item->tanggalPemakaianFormat() }}</td>
@@ -490,6 +494,7 @@
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
+                                                <th>ID Peminjaman</th>
                                                 <th>Nama Siswa</th>
                                                 <th>Kelas</th>
                                                 <th>Tanggal Pemakaian</th>
@@ -504,6 +509,7 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
+                                                    <td>PJM-0{{ $item->id_pinjam }}</td>
                                                     <td>{{ ucwords($item->siswa->nama_siswa) }}</td>
                                                     <td>{{ strtoupper($item->siswa->kelas) }}</td>
                                                     <td>{{ $item->tanggalPemakaianFormat() }}</td>

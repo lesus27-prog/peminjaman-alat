@@ -17,7 +17,8 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-
+        
+   
         if (!in_array(Auth::user()->role, $roles)) {
             abort(403, 'Akses ditolak');
         }

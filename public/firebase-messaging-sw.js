@@ -12,6 +12,34 @@ firebase.initializeApp({
 });
 const messaging = firebase.messaging();
 
+// messaging.setBackgroundMessageHandler(function (payload) {
+messaging.onBackgroundMessage(function (payload) {
+    return self.registration.showNotification(payload.data.title, {
+        body: payload.data.body,
+        icon: payload.data.icon,
+        data: {
+            link: payload.data.link,
+        },
+    });
+});
+
+self.addEventListener("notificationclick", function (event) {
+    event.notification.close();
+
+    const url = event.notification.data.link;
+
+    event.waitUntil(
+        clients
+            .openWindow(url)
+            .then(function (client) {
+                console.log("BERHASIL", client);
+            })
+            .catch(function (err) {
+                console.error("GAGAL", err);
+            }),
+    );
+});
+
 // const messaging = firebase.messaging();
 
 // messaging.onBackgroundMessage(function (payload) {

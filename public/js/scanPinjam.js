@@ -102,13 +102,13 @@ function renderKode(tipe, kodeAlat) {
 }
 
 let dataScan = {};
-let batasTipe = {};
+// let batasTipe = {};
 
-daftarPeminjaman.forEach(function (item) {
-    let tipe = item.nama_tipe.toLowerCase().trim();
+// daftarPeminjaman.forEach(function (item) {
+//     let tipe = item.nama_tipe.toLowerCase().trim();
 
-    batasTipe[tipe] = item.pivot.quantity;
-});
+//     batasTipe[tipe] = item.pivot.quantity;
+// });
 
 function addAlat(kodeAlat) {
     let dataAlat = alatData[kodeAlat];
@@ -145,16 +145,6 @@ function addAlat(kodeAlat) {
         return;
     }
 
-    if (dataAlat.kondisi_alat !== "baik") {
-        Swal.fire({
-            icon: "warning",
-            title: "Peringatan",
-            text: "Alat rusak / tidak dalam kondisi baik",
-        });
-
-        return;
-    }
-
     if (dataAlat.status_alat === "tidak tersedia") {
         Swal.fire({
             icon: "warning",
@@ -165,19 +155,19 @@ function addAlat(kodeAlat) {
         return;
     }
 
-    let jumlah = dataScan[tipeAlatScan] ? dataScan[tipeAlatScan].length : 0;
+    // let jumlah = dataScan[tipeAlatScan] ? dataScan[tipeAlatScan].length : 0;
 
-    let max = batasTipe[tipeAlatScan] || 0;
+    // let max = batasTipe[tipeAlatScan] || 0;
 
-    if (jumlah >= max) {
-        Swal.fire({
-            icon: "warning",
-            title: "Peringatan",
-            text: "Jumlah alat untuk tipe ini sudah penuh",
-        });
+    // if (jumlah >= max) {
+    //     Swal.fire({
+    //         icon: "warning",
+    //         title: "Peringatan",
+    //         text: "Jumlah scan alat untuk tipe ini sudah penuh",
+    //     });
 
-        return;
-    }
+    //     return;
+    // }
 
     if (!dataScan[tipeAlatScan]) {
         dataScan[tipeAlatScan] = [];

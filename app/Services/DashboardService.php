@@ -81,6 +81,7 @@ class DashboardService
             ->groupByRaw('MONTH(tanggal_selesai)')
             ->pluck('total', 'bulan');
 
+            
         $pinjamBulanan = [];
 
         for ($i = 1; $i <= 12; $i++) {
@@ -133,45 +134,52 @@ class DashboardService
 
     public function tracking($request)
     {
-        $alat = DetailAlat::with([
-            'tipeAlat',
-            'peminjaman' => function ($query) {
-                $query->orderBy('tanggal_mulai', 'desc')->orderBy('jam_mulai', 'desc');;
-            },
-            'peminjaman.siswa',
-            'peminjaman.detailAlat'
-        ])->where('kode_alat', $request->kode_alat)->first();
+        $alat = DetailAlat::with('tipeAlat')
+            ->where('kode_alat', $request->kode_alat)
+            ->first();
 
         if (!$alat) {
             return response()->json([
                 'status' => false,
-                'empty' => true,
                 'message' => 'Masukkan kode alat yang valid'
             ]);
         }
 
+        $peminjaman = $alat->peminjaman()
+            ->with('siswa')
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('tanggal_mulai', '>=', $request->start_date);
+            })
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('tanggal_mulai', '<=', $request->end_date);
+            })
+            ->when($request->kondisi_alat, function ($q) use ($request, $alat) {
+                $q->whereHas('detailAlat', function ($sub) use ($request, $alat) {
+                    $sub->where('detail_alat.id_detail_alat', $alat->id_detail_alat)
+                        ->where('peminjaman_detail.kondisi_kembali', $request->kondisi_alat);
+                });
+            })
+            ->orderByDesc('tanggal_mulai')
+            ->orderByDesc('jam_mulai')
+            ->get();
+
         $riwayat = [];
 
-        $start = $request->start_date;
-        $end = $request->end_date;
-
-        foreach ($alat->peminjaman as $pinjam) {
-
-            if ($start && $pinjam->tanggal_mulai < $start) continue;
-            if ($end && $pinjam->tanggal_mulai > $end) continue;
-
+        foreach ($peminjaman as $pinjam) {
             $pivot = $pinjam->detailAlat
                 ->where('id_detail_alat', $alat->id_detail_alat)
                 ->first()
-                ->pivot ?? null;
+                ?->pivot;
 
             $riwayat[] = [
-                'nama' => $pinjam->siswa->nama_siswa,
-                'kelas' => $pinjam->siswa->kelas,
-                'tanggal' => $pinjam->tanggal_mulai,
-                'terlambat' => $pinjam->terlambat() ? 'Terlambat' : 'Tepat Waktu',
+                'id_pinjam' => $pinjam->id_pinjam,
+                'nama' => $pinjam->siswa->nama_siswa ?? '-',
+                'kelas' => $pinjam->siswa->kelas ?? '-',
+                'tanggal_pinjam' => \Carbon\Carbon::parse($pinjam->tanggal_mulai . ' ' . $pinjam->jam_mulai)->format('d-m-Y H:i'),
+                'tanggal_kembali' => \Carbon\Carbon::parse($pinjam->tanggal_selesai . ' ' . $pinjam->jam_selesai)->format('d-m-Y H:i'),
+                'terlambat' => $pivot->is_terlambat,
                 'kondisi' => $pivot->kondisi_kembali ?? '-',
-                'catatan' => $pivot->catatan ?? '-'
+                'catatan' => $pivot->catatan ?? '-',
             ];
         }
 
@@ -181,7 +189,7 @@ class DashboardService
                 'tipe' => $alat->tipeAlat->nama_tipe,
                 'kondisi' => $alat->kondisi_alat,
                 'status' => $alat->status_alat,
-                'dipinjam' => $alat->peminjaman->count(),
+                'dipinjam' => $peminjaman->count(),
                 'riwayat' => $riwayat
             ]
         ]);
@@ -194,10 +202,19 @@ class DashboardService
         $data = Peminjaman::whereIn('status_pinjam', ['menunggu', 'siap diambil'])
             ->whereDate('tanggal_mulai', $tanggal)
             ->with('tipeAlat')
+            ->orderBy('jam_mulai', 'asc')
             ->get()
             ->groupBy(function ($item) {
                 return \Carbon\Carbon::parse($item->jam_mulai)->format('H:i');
             });
+
+        // $data = Peminjaman::whereIn('status_pinjam', ['menunggu', 'siap diambil'])
+        //     ->whereDate('tanggal_mulai', $tanggal)
+        //     ->with('tipeAlat')
+        //     ->get()
+        //     ->groupBy(function ($item) {
+        //         return \Carbon\Carbon::parse($item->jam_mulai)->format('H:i');
+        //     });
 
         $result = [];
 

@@ -13,18 +13,14 @@ class UpdatePeminjamanStatus extends Command
 
     public function handle(PeminjamanService $service)
     {
-        Peminjaman::whereNotIn('status_pinjam', [
-            'batal',
-            'selesai',
-            'aktif',
-            'proses pengembalian'
+        Peminjaman::whereIn('status_pinjam', [
+            'menunggu',
+            'siap diambil'
         ])
             ->chunk(100, function ($data) use ($service) {
                 foreach ($data as $pinjam) {
                     $service->updateStatus($pinjam);
                 }
             });
-
-        $this->info("OK jalan");
     }
 }

@@ -154,8 +154,9 @@ class SiswaController extends Controller
 
     public function import(Request $request)
     {
+
         $request->validate([
-            'file' => 'required|mimes:xlsx,csv,xls'
+            'file' => 'required|file|mimes:xlsx,csv,xls'
         ]);
 
         try {
@@ -166,7 +167,7 @@ class SiswaController extends Controller
         } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->with('upload_error', 'Data siswa gagal diimport!');
+                ->with('upload_error', 'Gagal mengimpor data siswa. Periksa file format!');
         }
     }
 

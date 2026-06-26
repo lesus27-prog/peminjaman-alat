@@ -53,6 +53,7 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
+                                <th>ID Peminjaman</th>
                                 <th>Tanggal Pinjam</th>
                                 <th>Tanggal Kembali</th>
                                 <th>Alat</th>
@@ -65,9 +66,13 @@
                                     <td>
                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d M Y') }}</td>
-                                    <td class="td-detail">
+                                    <td>PJM-0{{ $item->id_pinjam }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai . ' ' . $item->jam_mulai)->locale('id')->translatedFormat('l, d-m-Y H:i') }}
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai . ' ' . $item->jam_selesai)->locale('id')->translatedFormat('l, d-m-Y H:i') }}
+                                    </td>
+                                    <td class="td-detail"
+                                        data-tipe="{{ $item->tipeAlat->pluck('nama_tipe')->implode(', ') }}">
                                         <button class="btn-detail-soft btn-detail">
                                             <span class="icon-wrap">
                                                 <i class="fas fa-plus"></i>
@@ -96,7 +101,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        @if ($item->is_terlambat == 1)
+                                        @if ($item->detailAlat->pluck('pivot.is_terlambat')->contains(1))
                                             <span class="badge badge-soft-danger rounded-pill" data-status="terlambat">
                                                 Terlambat
                                             </span>
@@ -169,42 +174,42 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="{{ asset('js/riwayatPinjam.js') }}"></script>
     <script>
-        $(document).ready(function() {
-            $.fn.dataTable.ext.search.push(function(settings, data) {
+        // $(document).ready(function() {
+        //     $.fn.dataTable.ext.search.push(function(settings, data) {
 
-                let dateStr = data[2];
-                if (!dateStr) return true;
+        //         let dateStr = data[2];
+        //         if (!dateStr) return true;
 
-                function parseDate(str) {
-                    let [day, month, year] = str.split(" ");
-                    let months = {
-                        "Jan": 0,
-                        "Feb": 1,
-                        "Mar": 2,
-                        "Apr": 3,
-                        "May": 4,
-                        "Jun": 5,
-                        "Jul": 6,
-                        "Aug": 7,
-                        "Sep": 8,
-                        "Oct": 9,
-                        "Nov": 10,
-                        "Dec": 11
-                    };
-                    return new Date(year, months[month], day);
-                }
+        //         function parseDate(str) {
+        //             let [day, month, year] = str.split(" ");
+        //             let months = {
+        //                 "Jan": 0,
+        //                 "Feb": 1,
+        //                 "Mar": 2,
+        //                 "Apr": 3,
+        //                 "May": 4,
+        //                 "Jun": 5,
+        //                 "Jul": 6,
+        //                 "Aug": 7,
+        //                 "Sep": 8,
+        //                 "Oct": 9,
+        //                 "Nov": 10,
+        //                 "Dec": 11
+        //             };
+        //             return new Date(year, months[month], day);
+        //         }
 
-                let rowDate = parseDate(dateStr);
+        //         let rowDate = parseDate(dateStr);
 
-                let start = filterState.start;
-                let end = filterState.end;
+        //         let start = filterState.start;
+        //         let end = filterState.end;
 
-                if (start && !end) return rowDate >= start;
-                if (!start && end) return rowDate <= end;
-                if (start && end) return rowDate >= start && rowDate <= end;
+        //         if (start && !end) return rowDate >= start;
+        //         if (!start && end) return rowDate <= end;
+        //         if (start && end) return rowDate >= start && rowDate <= end;
 
-                return true;
-            });
-        });
+        //         return true;
+        //     });
+        // });
     </script>
 @endpush

@@ -358,6 +358,15 @@
                 });
             @endif
 
+
+            @if ($errors->has('file'))
+                toastr.error("Gunakan format Excel (.xlsx, .xls, .csv)", "File Tidak Valid", {
+                    timeOut: 5000,
+                    progressBar: true,
+                    closeButton: true
+                });
+            @endif
+
             @if (session('update_success'))
                 $('#update-success-text').html(
                     'Data siswa dengan nama <strong>{{ session('update_success') }}</strong> berhasil di update'
@@ -445,11 +454,11 @@
                 Swal.fire({
                     title: "Tahun Ajaran Baru?",
                     html: ` Data siswa akan diperbarui:
-                      <br><br>
-                      <b>X → XI</b><br>
-                      <b>XI → XII</b><br>
-                      <b>XII → Tidak Aktif</b>
-                    `,
+        <br><br>
+        <b>X → XI</b><br>
+        <b>XI → XII</b><br>
+        <b>XII → Tidak Aktif</b>
+        `,
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonText: "Ya, lanjutkan!",

@@ -8,11 +8,9 @@
     <title>@yield('title')</title>
 
     <!-- Site favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('deskap/vendors/images/apple-touch-icon.png') }}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('deskap/vendors/images/favicon-32x32.png') }}" />
-    <link rel="icon" type="image/png" sizes="16x16"
-        href="{{ asset('deskap/vendors/images/favicon-16x16.png') }}" />
-
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('logo-smkn7-resmi.jpg') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('logo-smkn7-resmi.jpg') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('logo-smkn7-resmi.jpg') }}" />
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
@@ -25,6 +23,7 @@
     <link rel="stylesheet"
         type="text/css"href="{{ asset('deskap/src/plugins/datatables/css/responsive.bootstrap4.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('deskap/vendors/styles/style.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     @yield('link')
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -258,7 +257,7 @@
                         </a>
                     </li>
                     <li class="dropdown">
-                       <a href="{{ route('peminjamanSiswa.index') }}" class="dropdown-toggle no-arrow">
+                        <a href="{{ route('peminjamanSiswa.index') }}" class="dropdown-toggle no-arrow">
                             <span class="micon bi bi-file-earmark-post"></span><span class="mtext">Peminjaman</span>
                         </a>
                     </li>
@@ -290,6 +289,7 @@
     <script src="{{ asset('deskap/src/plugins/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('deskap/src/plugins/datatables/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('deskap/src/plugins/datatables/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS" height="0" width="0"
             style="display: none; visibility: hidden"></iframe></noscript>
     <script>
@@ -303,10 +303,30 @@
 
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
+
+        messaging.onMessage(function(payload) {
+            const title = payload.data?.title;
+            const body = payload.data?.body;
+
+            toastr.info(body, title, {
+                timeOut: 5000,
+                progressBar: true,
+                closeButton: true
+            });
+        });
+        messaging.onMessage(function(payload) {
+            const title = payload.data?.title;
+            const body = payload.data?.body;
+
+            toastr.info(body, title, {
+                timeOut: 5000,
+                progressBar: true,
+                closeButton: true
+            });
+        });
+
         $(document).ready(function() {
-
             if ('serviceWorker' in navigator) {
-
                 navigator.serviceWorker
                     .register('/firebase-messaging-sw.js')
                     .then(async (registration) => {
@@ -325,6 +345,8 @@
                                 serviceWorkerRegistration: registration
                             });
 
+                        const sub = await registration.pushManager.getSubscription();
+                        console.log("Push Subscription:", sub);
                         if (!token) {
                             console.log("Token kosong");
                             return;
@@ -348,37 +370,8 @@
 
                     })
                     .catch(console.error);
-                console.log("SCRIPT FIREBASE LOADED");
-                messaging.onMessage(function(payload) {
-                    console.log("FOREGROUND MESSAGE", payload);
-
-                    const title = payload.notification?.title;
-                    const body = payload.notification?.body;
-
-                    toastr.info(body, title, {
-                        timeOut: 5000,
-                        progressBar: true,
-                        closeButton: true
-                    });
-                });
             }
-
-            
         });
-
-        // console.log("SCRIPT FIREBASE LOADED");
-        // messaging.onMessage(function(payload) {
-        //     console.log("FOREGROUND MESSAGE", payload);
-
-        //     const title = payload.data.title;
-        //     const body = payload.data.body;
-
-        //     toastr.info(body, title, {
-        //         timeOut: 5000,
-        //         progressBar: true,
-        //         closeButton: true
-        //     });
-        // });
     </script>
     @stack('scripts')
 </body>

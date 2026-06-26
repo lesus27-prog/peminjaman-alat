@@ -29,7 +29,7 @@ class DetailAlat extends Model
         return $this->belongsToMany(Peminjaman::class, 'peminjaman_detail', 'id_detail_alat', 'id_pinjam')->withPivot(
             'tanggal_pengembalian',
             'is_terlambat',
-            'is_kembali',
+            'is_scan_kembali',
             'kondisi_kembali',
             'catatan'
         )->withTimestamps();

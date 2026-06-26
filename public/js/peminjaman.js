@@ -137,7 +137,7 @@ $(document).ready(function () {
         let kembali = 0;
 
         alatList.forEach(function (alat) {
-            if (alat.pivot.is_kembali == 1) {
+            if (alat.pivot.is_scan_kembali == 1) {
                 kembali++;
             }
         });
@@ -254,7 +254,7 @@ $(document).ready(function () {
 
             tipe.items.forEach((alat) => {
                 let badgeClass =
-                    alat.pivot.is_kembali == 0
+                    alat.pivot.is_scan_kembali == 0
                         ? "kode-badge-tidak-lengkap"
                         : "kode-badge-lengkap";
 

@@ -97,6 +97,7 @@
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
+                                                <th>ID Peminjaman</th>
                                                 <th>Tanggal Pemakaian</th>
                                                 <th>Batas Pengembalian</th>
                                                 <th>Status</th>
@@ -110,6 +111,7 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
+                                                    <td>PJM-0{{ $item->id_pinjam }}</td>
                                                     <td>{{ $item->tanggalPemakaianFormat() }}</td>
                                                     <td>{{ $item->batasPengembalianFormat() }}</td>
                                                     <td>
@@ -183,6 +185,7 @@
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
+                                                <th>ID Peminjaman</th>
                                                 <th>Tanggal Pemakaian</th>
                                                 <th>Batas Pengembalian</th>
                                                 <th>Status</th>
@@ -196,6 +199,7 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
+                                                    <td>PJM-0{{ $item->id_pinjam }}</td>
                                                     <td>{{ $item->tanggalPemakaianFormat() }}</td>
                                                     <td>{{ $item->batasPengembalianFormat() }}</td>
                                                     <td>
@@ -237,10 +241,14 @@
                                                         <div class="action-group">
                                                             <a href="{{ route('peminjaman.scan', $item->id_pinjam) }}">
                                                                 <button type="button" class="btn btn-camera-soft"
+                                                                    title="Scan">
+                                                                    <i class="fa-solid fa-camera"></i>
+                                                                </button>
+                                                                {{-- <button type="button" class="btn btn-camera-soft"
                                                                     title="Scan"
                                                                     {{ !$item->cameraActive() ? 'disabled title=Belum masuk waktu scan' : '' }}>
                                                                     <i class="fa-solid fa-camera"></i>
-                                                                </button>
+                                                                </button> --}}
                                                             </a>
                                                             <form
                                                                 action="{{ route('peminjaman.cancel', $item->id_pinjam) }}"
@@ -473,7 +481,8 @@
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
-                                                <th>Tanggal Pemakaian</th>
+                                                <th>ID Peminjaman</th>
+                                                <th>Tanggal Pemakaian</th>                                          
                                                 <th>Batas Pengembalian</th>
                                                 <th>Alat</th>
                                                 <th>Status</th>
@@ -485,6 +494,7 @@
                                                     <td>
                                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                                     </td>
+                                                    <td>PJM-0{{ $item->id_pinjam }}</td>
                                                     <td>{{ $item->tanggalPemakaianFormat() }}</td>
                                                     <td>{{ $item->batasPengembalianFormat() }}</td>
                                                     <td class="td-detail">
@@ -628,7 +638,21 @@
                 }, 3000);
             @endif
 
+  @if (session('errorNotPeminjaman'))
+                toastr.error("{{ session('errorNotPeminjaman') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
+                    progressBar: true,
+                    closeButton: true
+                });
+            @endif
 
+              @if (session('errorMenunggu'))
+                toastr.error("{{ session('errorMenunggu') }}", "Terjadi Kesalahan", {
+                    timeOut: 5000,
+                    progressBar: true,
+                    closeButton: true
+                });
+            @endif
         });
     </script>
 @endpush

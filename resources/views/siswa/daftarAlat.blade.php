@@ -345,12 +345,12 @@
                                         <option value="10:00:00">10:00</option>
                                         <option value="10:45:00">10:45</option>
                                         <option value="11:30:00">11:30</option>
-                                        <option value="12:00:00">12:00</option>
+                                        <option value="12:20:00">12:20</option>
                                         <option value="13:45:00">13:45</option>
                                         <option value="14:30:00">14:30</option>
                                         <option value="15:15:00">15:15</option>
                                         <option value="00:01:00">00:01</option>
-                                        <option value="00:40:00">00:40</option>
+                                        <option value="21:53:00">21:53</option>
                                     </select>
                                 </div>
                             </div>

@@ -85,37 +85,17 @@ $(document).ready(function () {
 
     let filterState = {
         kelas: "",
-
         tipe: "",
         start: null,
         end: null,
     };
     // ===================== FILTER APPLY =====================
     $(".btn-universal").on("click", function () {
-        table
-            .column(2)
-            .search(
-                filterState.kelas ? "^" + filterState.kelas + "$" : "",
-                true,
-                false,
-            )
-            .draw();
-
-        table
-            .column(3)
-            .search(
-                filterState.tipe ? "^" + filterState.tipe + "$" : "",
-                true,
-                false,
-            )
-            .draw();
-
         table.draw();
 
-        let total = countActiveFilters();
         $("#filterBadge")
-            .text(total)
-            .toggle(total > 0);
+            .text(countActiveFilters())
+            .toggle(countActiveFilters() > 0);
 
         $("#filterModal").modal("hide");
     });
@@ -198,10 +178,34 @@ $(document).ready(function () {
         },
     });
 
+    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+        let row = table.row(dataIndex).node();
+
+        let kelas = filterState.kelas;
+        let tipe = filterState.tipe;
+
+        let rowKelas = $(row).find("td").eq(3).text().toLowerCase();
+        let rowTipe = (
+            $(row).find("td").eq(4).data("tipe") || ""
+        ).toLowerCase();
+
+        // FILTER KELAS
+        if (kelas && rowKelas !== kelas.toLowerCase()) {
+            return false;
+        }
+
+        // FILTER TIPE (EXTSEARCH)
+        if (tipe && !rowTipe.includes(tipe.toLowerCase())) {
+            return false;
+        }
+
+        return true;
+    });
+
     // ===================== DATE FILTER DATATABLE =====================
     $.fn.dataTable.ext.search.push(function (settings, data) {
         console.log("Semua data row:", data);
-        let dateStr = data[4];
+        let dateStr = data[5];
         console.log("Tanggal dari tabel:", dateStr);
         if (!dateStr) return true;
 

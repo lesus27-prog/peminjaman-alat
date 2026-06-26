@@ -29,7 +29,22 @@ return new class extends Migration
                 'batal',
                 'selesai'
             ])->default('menunggu');
-            $table->boolean('is_reminder_sent')->default(false);
+            $table->enum(
+                'pickup_notif_status',
+                [
+                    'pending',
+                    'success',
+                    'failed'
+                ]
+            )->default('pending');
+            $table->enum(
+                'return_notif_status',
+                [
+                    'pending',
+                    'success',
+                    'failed'
+                ]
+            )->default('pending');
             $table->string('kelas_siswa');
             $table->timestamps();
         });
@@ -44,7 +59,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->dateTime('tanggal_pengembalian')->nullable();
-            $table->boolean('is_kembali')->default(false);
+            $table->boolean('is_scan_kembali')->default(false);
             $table->enum('kondisi_kembali', [
                 'baik',
                 'perlu perbaikan',

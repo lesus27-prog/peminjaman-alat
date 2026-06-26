@@ -9,10 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
     <link rel="stylesheet" href="{{ asset('css/button.css') }}">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-
-    <style>
-
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/filter.css') }}">
 @endsection
 @section('content')
     <div class="pd-ltr-20 xs-pd-20-10">
@@ -108,7 +105,96 @@
                 </div>
 
             </div>
-            <div class="pd-20 card-box box-peminjaman">
+
+            <div class="pd-20 card-box height-100-p lacak-card">
+                <h4 class="h4 text-dark d-flex align-items-center gap-2">
+                    Lacak Penggunaan Alat
+                </h4>
+                <hr class="my-1">
+                <div class="lacak-header p-2 mt-2">
+
+                    {{-- <form action="{{ route('tracking.alat') }}" method="GET"> --}}
+                    <div class="row align-items-end">
+
+
+
+
+                        <div class="col-md-7">
+                            <label class="form-label label">Kode alat</label>
+
+                            <div class="input-wrapper">
+                                <button class="filter-btn" id="filterBtn" data-toggle="modal" data-target="#filterModal">
+                                    <i class="fa fa-sliders"></i>
+                                    <span class="filter-badge" id="filterBadge">0</span>
+                                </button>
+
+                                <input type="text" name="kode_alat" class="form-control input-with-icon" id="kode-alat"
+                                    placeholder="Masukkan kode alat...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+
+                            <button id="btn-tracking-search" class="btn btn-universal w-100 p-1" type="button">
+                                <i class="fa fa-search"></i>Search
+                            </button>
+                        </div>
+                    </div>
+                    {{-- </form> --}}
+                </div>
+                <div class="lacak-content" id="lacak-content">
+
+                    <!-- SUMMARY (hidden awal) -->
+                    <div class="mini-track-grid mb-3 d-none" id="track-summary"></div>
+
+                    <!-- TABLE (hidden awal) -->
+                    <div class="table-wrapper d-none" id="track-table-wrapper">
+
+                        <table class="data-table table hover multiple-select-row py-0 px-2 border-0"
+                            style="background: #e9edf9b1 !important; border-radius: 22px;">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>ID Peminjaman</th>
+                                    <th>Nama</th>
+                                    <th>Kelas</th>
+                                    <th>Tanggal Pinjam</th>
+                                    <th>Tanggal Kembali</th>
+                                    <th>Keterlambatan</th>
+                                    <th>Kondisi Kembali</th>
+                                    <th>Catatan</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="track-table"></tbody>
+                        </table>
+
+                    </div>
+
+                    <div class="text-center py-5 empty-state" id="track-empty">
+
+                        <div style="font-size: 55px;">🔎</div>
+
+                        <h5 class="mt-3" style="color: #296087;">
+                            Lacak Alat
+                        </h5>
+
+                        <p class="text-muted mb-0" style="font-size: 13px; font-weight: 500;">
+                            Masukkan kode alat untuk mulai pencarian
+                        </p>
+                    </div>
+                    <!-- LOADING SPINNER -->
+                    <div class="text-center py-5 d-none" id="track-loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p class="mt-2" style="font-size: 13px;">
+                            Mencari data...
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            {{-- <div class="pd-20 card-box box-peminjaman">
                 <h4 class="h4 text-dark">
                     Peminjaman Tiap Bulan
                 </h4>
@@ -116,6 +202,59 @@
                 <hr class="my-1">
 
                 <div id="chart-peminjaman-bulan"></div>
+            </div> --}}
+        </div>
+    </div>
+@endsection
+@section('modal')
+    <div class="modal fade" id="filterModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white">
+                        <i class="fa fa-filter mr-2"></i> Filter Data
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="filter-card mb-3">
+                        <div class="filter-label-wrapper mb-2">
+                            <i class="bi bi-calendar-check filter-icon"></i>
+                            <div class="filter-label">Range Tanggal</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">Start</div>
+                                <input type="text" id="startDate" class="form-control search-box filter-input"
+                                    placeholder="📅 Pilih tanggal">
+                            </div>
+
+                            <div class="col-6">
+                                <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">End</div>
+                                <input type="text" id="endDate" class="form-control search-box filter-input"
+                                    placeholder="📅 Pilih tanggal">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-card">
+                        <div class="filter-label-wrapper">
+                            <i class="bi bi-exclamation-triangle filter-icon"></i>
+                            <div class="filter-label">Kondisi Alat</div>
+                        </div>
+                        <select id="filterKondisi" class="form-control filterKondisi filter-input">
+                            <option value="">All Kondisi</option>
+                            <option value="baik">Baik</option>
+                            <option value="perlu perbaikan">Perlu Perbaikan</option>
+                            <option value="rusak">Rusak</option>
+                            <option value="hilang">Hilang</option>
+                        </select>
+                    </div>
+                </div>
+                <div class=" footer modal-footer justify-content-between">
+                    <button class="btn btn-light btn-back"><i class="bi bi-arrow-counterclockwise"></i>Reset</button>
+                    <button class="btn btn-primary btn-universal" id="apply-filter"><i
+                            class="bi bi-check2-circle"></i>Terapkan</button>
+                </div>
             </div>
         </div>
     </div>
@@ -125,7 +264,15 @@
     <script src="{{ asset('deskap/vendors/scripts/apexcharts-setting.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+    {{-- <script>
+        window.summary = @json($summary);
+        window.detail = @json($detail);
+    </script> --}}
+    <script src="{{ asset('js/dashboard.js') }}"></script>
     <script>
+        function ucwords(str) {
+            return str.replace(/\b\w/g, char => char.toUpperCase());
+        }
         var optionsBulanan = {
 
             series: [{
@@ -266,7 +413,7 @@
         let jumlahDipinjam = [];
 
         @foreach ($topAlat as $alat)
-            namaAlat.push("{{ $alat->nama_tipe }}");
+            namaAlat.push("{{ ucwords($alat->nama_tipe) }}");
             jumlahDipinjam.push({{ $alat->total_dipinjam }});
         @endforeach
 
@@ -381,11 +528,11 @@
                 events: {
                     dataPointSelection: function(event, chartContext, config) {
 
-                        let jenis = config.w.config.labels[config.dataPointIndex];
+                        let jenis = summary[config.dataPointIndex].nama_jenis;
 
-                        let hasil = $.grep(detail, function(item) {
-                            return item.nama_jenis === jenis;
-                        });
+                        let hasil = detail.filter(item =>
+                            item.nama_jenis.toLowerCase().trim() === jenis.toLowerCase().trim()
+                        );
 
                         let html = '';
 
@@ -438,7 +585,7 @@
 
             series: summary.map(item => item.tipe_alat_count),
 
-            labels: summary.map(item => item.nama_jenis),
+            labels: summary.map(item => ucwords(item.nama_jenis)),
 
             colors: ["#3c6497", "#4f83c2", "#60a5fa", "#93c5fd", "#dbeafe",
                 "#1d4ed8", "#2563eb", "#1e40af", "#0ea5e9", "#38bdf8",
@@ -530,169 +677,6 @@
         );
 
         chart.render();
-        // var options = {
-        //     chart: {
-        //         type: 'donut',
-        //         height: 320,
-        //         toolbar: {
-        //             show: false
-        //         },
-        //         events: {
-        //             dataPointSelection: function(event, chartContext, config) {
-
-        //                 let kondisi = config.w.config.labels[config.dataPointIndex]
-        //                     .toLowerCase()
-        //                     .trim();
-
-        //                 let hasil = $.grep(detail, function(item) {
-        //                     return item.kondisi_alat.toLowerCase().trim() === kondisi;
-        //                 });
-
-        //                 let html = '';
-
-        //                 if (hasil.length === 0) {
-        //                     html = `
-    //                 <tr>
-    //                     <td colspan="5" class="text-center text-muted">
-    //                         Tidak ada data
-    //                     </td>
-    //                 </tr>
-    //             `;
-        //                 } else {
-
-        //                     $.each(hasil, function(i, item) {
-
-        //                         let badgeClass = '';
-
-        //                         if (item.kondisi_alat === 'rusak') {
-        //                             badgeClass = 'badge-danger';
-        //                         } else if (item.kondisi_alat === 'perlu perbaikan') {
-        //                             badgeClass = 'badge-warning';
-        //                         } else if (item.kondisi_alat === 'hilang') {
-        //                             badgeClass = 'badge-dark';
-        //                         } else {
-        //                             badgeClass = 'badge-success';
-        //                         }
-
-        //                         html += `
-    //                     <tr>
-    //                         <td>
-    //                             <div class="no-badge">
-    //                                 ${i + 1}.
-    //                             </div>
-    //                         </td>
-
-    //                         <td>
-    //                             ${item.tipe_alat?.nama_tipe ?? '-'}
-    //                         </td>
-
-    //                         <td>
-    //                             <span class="badge badge-primary">
-    //                                 ${item.kode_alat}
-    //                             </span>
-    //                         </td>
-
-    //                         <td>
-    //                             ${item.tipe_alat?.lokasi_rak ?? '-'}
-    //                         </td>
-
-    //                         <td>
-    //                             <span class="badge ${badgeClass}">
-    //                                 ${item.kondisi_alat}
-    //                             </span>
-    //                         </td>
-    //                     </tr>
-    //                 `;
-        //                     });
-        //                 }
-
-        //                 $('#list-alat').html(html);
-        //             }
-        //         }
-        //     },
-
-        //     series: summary.map(item => item.total),
-
-        //     labels: summary.map(item => item.kondisi_alat),
-
-        //     colors: ['#ff4d4f', '#faad14', '#595959', '#52c41a'],
-
-        //     stroke: {
-        //         width: 5,
-        //         colors: ['#fff']
-        //     },
-
-        //     plotOptions: {
-        //         pie: {
-        //             expandOnClick: true,
-
-        //             donut: {
-        //                 size: '55%',
-
-        //                 labels: {
-        //                     show: true,
-
-        //                     name: {
-        //                         show: true,
-        //                         fontSize: '16px',
-        //                         fontWeight: 600
-        //                     },
-
-        //                     value: {
-        //                         show: true,
-        //                         fontSize: '22px',
-        //                         fontWeight: 700
-        //                     },
-
-        //                     total: {
-        //                         show: true,
-        //                         label: 'Total Alat',
-        //                         fontSize: '15px',
-        //                         fontWeight: 600,
-
-        //                         formatter: function() {
-
-        //                             let baik = summary.find(item =>
-        //                                 item.kondisi_alat.toLowerCase().trim() === 'baik'
-        //                             );
-
-        //                             return baik ? baik.total : 0;
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     },
-
-        //     dataLabels: {
-        //         enabled: true,
-        //         style: {
-        //             fontSize: '13px',
-        //             fontWeight: 'bold'
-        //         }
-        //     },
-
-        //     legend: {
-        //         position: 'bottom',
-        //         fontSize: '14px'
-        //     },
-
-        //     states: {
-        //         hover: {
-        //             filter: {
-        //                 type: 'lighten',
-        //                 value: 0.08
-        //             }
-        //         }
-        //     }
-        // };
-
-        // var chart = new ApexCharts(
-        //     document.querySelector("#chart8"),
-        //     options
-        // );
-
-        // chart.render();
 
 
 

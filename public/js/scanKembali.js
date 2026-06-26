@@ -265,7 +265,6 @@ function submitPinjam() {
         return;
     }
 
-    // kalau sudah lengkap langsung submit
     kirimData();
 }
 

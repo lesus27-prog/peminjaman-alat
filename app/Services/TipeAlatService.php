@@ -34,11 +34,11 @@ class TipeAlatService
                 'status_alat' => 'tersedia'
             ]);
 
-            $url = route(
-                'scan.qr',
-                $kode_alat
-            );
-
+            // $url = route(
+            //     'scan.qr',
+            //     $kode_alat
+            // );
+            $url = url('/scan/' . $kode_alat);
             QrCode::format('png')
                 ->errorCorrection('Q')
                 ->size(400)
@@ -49,6 +49,4 @@ class TipeAlatService
                 );
         }
     }
-
- 
 }

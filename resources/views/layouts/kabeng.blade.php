@@ -7,11 +7,9 @@
     <title>@yield('title')</title>
 
     <!-- Site favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('deskap/vendors/images/apple-touch-icon.png') }}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('deskap/vendors/images/favicon-32x32.png') }}" />
-    <link rel="icon" type="image/png" sizes="16x16"
-        href="{{ asset('deskap/vendors/images/favicon-16x16.png') }}" />
-
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('logo-smkn7-resmi.jpg') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('logo-smkn7-resmi.jpg') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('logo-smkn7-resmi.jpg') }}" />
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />

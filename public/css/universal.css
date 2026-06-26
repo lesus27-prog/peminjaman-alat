@@ -2135,3 +2135,8 @@ font-size: 13px !important;
 .text-success {
     color: #06e959;
 }
+
+.filter-input{
+    color: #6c757d;
+    font-weight: 500;
+}

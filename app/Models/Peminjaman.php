@@ -18,7 +18,8 @@ class Peminjaman extends Model
         'jam_mulai',
         'jam_selesai',
         'status_pinjam',
-        'is_reminder_sent',
+        'pickup_notif_status',
+        'return_notif_status',
         'kelas_siswa'
     ];
 
@@ -37,7 +38,7 @@ class Peminjaman extends Model
         )->withPivot(
             'tanggal_pengembalian',
             'is_terlambat',
-            'is_kembali',
+            'is_scan_kembali',
             'kondisi_kembali',
             'catatan'
         )->withTimestamps();
@@ -48,16 +49,14 @@ class Peminjaman extends Model
         return $this->belongsToMany(TipeAlat::class, 'peminjaman_tipe', 'id_pinjam', 'id_tipe')->withPivot('quantity')->withTimestamps();
     }
 
-    public function cameraActive()
-    {
-        $waktuMulai = Carbon::parse($this->tanggal_mulai . ' ' . $this->jam_mulai);
-        $waktuSelesai = Carbon::parse($this->tanggal_selesai . ' ' . $this->jam_selesai);
-        $batasMulai = $waktuMulai->copy()->subMinutes(10);
-
-        // $sekarang = Carbon::parse('2026-05-06 12:30');
-        $sekarang = now();
-        return $sekarang->greaterThanOrEqualTo($batasMulai) && $sekarang->lessThanOrEqualTo($waktuSelesai);
-    }
+    // public function cameraActive()
+    // {
+    //     $waktuMulai = Carbon::parse($this->tanggal_mulai . ' ' . $this->jam_mulai);
+    //     $waktuSelesai = Carbon::parse($this->tanggal_selesai . ' ' . $this->jam_selesai);
+    //     $batasMulai = $waktuMulai->copy()->subMinutes(10);
+    //     $sekarang = now();
+    //     return $sekarang->greaterThanOrEqualTo($batasMulai) && $sekarang->lessThanOrEqualTo($waktuSelesai);
+    // }
 
     public function tanggalPemakaianFormat()
     {

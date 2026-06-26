@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Laporan Peminjaman</title>
@@ -20,6 +21,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="kop">
         <div class="kop-left">
@@ -71,9 +73,12 @@
                     <td class="text-left">{{ ucwords($item->siswa->nama_siswa) }}</td>
                     <td>{{ strtoupper($item->siswa->kelas) }}</td>
                     <td class="text-left">
-                        @foreach ($item->tipeAlat as $alat)
-                            - {{ ucwords($alat->nama_tipe) }}
-                        @endforeach
+                        <ul>
+                            @foreach ($item->tipeAlat as $alat)
+                                <li>{{ ucwords($alat->nama_tipe) }}</li>
+                            @endforeach
+                        </ul>
+
                     </td>
                     <td>
                         {{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}
@@ -90,4 +95,5 @@
         </tbody>
     </table>
 </body>
+
 </html>

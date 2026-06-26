@@ -9,9 +9,61 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 
-
 class PeminjamanService
 {
+    // public function updateStatus(Peminjaman $peminjaman)
+    // {
+    //     $waktuPakai = CarbonImmutable::parse(
+    //         $peminjaman->tanggal_mulai . ' ' . $peminjaman->jam_mulai
+    //     );
+
+    //     $waktuSelesai = CarbonImmutable::parse(
+    //         $peminjaman->tanggal_selesai . ' ' . $peminjaman->jam_selesai
+    //     );
+
+    //     $batasMulai = $waktuPakai->subMinutes(10);
+
+    //     $sekarang = now();
+
+    //     if ($sekarang->greaterThan($waktuSelesai)) {
+    //         $statusBaru = 'batal';
+    //     } elseif ($sekarang->greaterThanOrEqualTo($batasMulai)) {
+    //         $statusBaru = 'siap diambil';
+    //     } else {
+    //         $statusBaru = 'menunggu';
+    //     }
+
+    //     if ($peminjaman->status_pinjam !== $statusBaru) {
+
+    //         $peminjaman->update(['status_pinjam' => $statusBaru]);
+
+    //         if ($statusBaru === 'siap diambil' && $peminjaman->pickup_notif_status === 'pending') {
+
+    //             $token = $peminjaman->siswa?->akunUser?->fcm_token;
+
+    //             if (!$token) {
+    //                 $peminjaman->update([
+    //                     'pickup_notif_status' => 'failed'
+    //                 ]);
+    //                 return;
+    //             }
+    //             $link = '/peminjaman-scan/' . $peminjaman->id_pinjam;
+    //             $sent = FCMService::send(
+    //                 $token,
+    //                 "Alat Siap Diambil [#PJM-0$peminjaman->id_pinjam]",
+    //                 "Silakan datang ke ruang peminjaman untuk mengambil alat",
+    //                 $link,
+    //                 3600
+
+    //             );
+
+    //             $peminjaman->update([
+    //                 'pickup_notif_status' => $sent ? 'success' : 'failed'
+    //             ]);
+    //         }
+    //     }
+    // }
+
     public function updateStatus(Peminjaman $peminjaman)
     {
         $waktuPakai = CarbonImmutable::parse(
@@ -26,12 +78,12 @@ class PeminjamanService
 
         $sekarang = now();
 
-        if ($sekarang->lessThan($batasMulai)) {
-            $statusBaru = 'menunggu';
-        } elseif ($sekarang->greaterThan($waktuSelesai)) {
+        if ($sekarang->greaterThan($waktuSelesai)) {
             $statusBaru = 'batal';
-        } else {
+        } elseif ($sekarang->greaterThanOrEqualTo($batasMulai)) {
             $statusBaru = 'siap diambil';
+        } else {
+            $statusBaru = 'menunggu';
         }
 
         if ($peminjaman->status_pinjam !== $statusBaru) {
@@ -39,27 +91,43 @@ class PeminjamanService
             $peminjaman->update(['status_pinjam' => $statusBaru]);
 
             if ($statusBaru === 'siap diambil') {
-
-                $token = $peminjaman->siswa?->akunUser?->fcm_token;
-
-                if ($token) {
-                    FCMService::send(
-                        $token,
-                        "Alat Siap Diambil",
-                        "Silakan ambil alat yang kamu pinjam",
-                        3600
-                    );
-                }
+                $this->sendPickupNotification($peminjaman);
             }
         }
     }
 
-    public function checkReminder(Peminjaman $peminjaman)
+    public function sendPickupNotification(Peminjaman $peminjaman)
     {
-        if ($peminjaman->is_reminder_sent) {
+        if ($peminjaman->pickup_notif_status !== 'pending') {
             return;
         }
 
+        $token = $peminjaman->siswa?->akunUser?->fcm_token;
+
+        if (!$token) {
+            $peminjaman->update([
+                'pickup_notif_status' => 'failed'
+            ]);
+            return;
+        }
+
+        $link = '/peminjaman-scan/' . $peminjaman->id_pinjam;
+
+        $sent = FCMService::send(
+            $token,
+            "Alat Siap Diambil [#PJM-0$peminjaman->id_pinjam]",
+            "Silakan datang ke ruang peminjaman untuk mengambil alat",
+            $link,
+            3600
+        );
+
+        $peminjaman->update([
+            'pickup_notif_status' => $sent ? 'success' : 'failed'
+        ]);
+    }
+
+    public function checkReminder(Peminjaman $peminjaman)
+    {
         $batas = Carbon::parse(
             $peminjaman->tanggal_selesai . ' ' . $peminjaman->jam_selesai
         );
@@ -72,29 +140,80 @@ class PeminjamanService
             return;
         }
 
-        $sisaMenit = round($sisaMenit);
+        $this->sendReturnNotification($peminjaman, round($sisaMenit));
+    }
 
+    public function sendReturnNotification(Peminjaman $peminjaman, int $sisaMenit)
+    {
         $token = $peminjaman->siswa?->akunUser?->fcm_token;
+
         if (!$token) {
+            $peminjaman->update([
+                'return_notif_status' => 'failed'
+            ]);
             return;
         }
 
-        $result = false;
+        $link = '/proses-pengembalian/' . $peminjaman->id_pinjam;
 
-        $result = FCMService::send(
+        $sent = FCMService::send(
             $token,
-            "Reminder Pengembalian",
-            "{$sisaMenit} menit lagi waktu peminjaman habis",
+            "Reminder Pengembalian [PJM-0$peminjaman->id_pinjam]",
+            "Peminjaman akan berakhir dalam {$sisaMenit} menit. Harap segera dikembalikan",
+            $link,
             600
         );
 
-
-        if ($result) {
-            $peminjaman->update([
-                'is_reminder_sent' => true
-            ]);
-        }
+        $peminjaman->update([
+            'return_notif_status' => $sent ? 'success' : 'failed'
+        ]);
     }
+
+    // public function checkReminder(Peminjaman $peminjaman)
+    // {
+    //     // if ($peminjaman->return_notif_status !== 'pending') {
+    //     //     return;
+    //     // }
+
+    //     $batas = Carbon::parse(
+    //         $peminjaman->tanggal_selesai . ' ' . $peminjaman->jam_selesai
+    //     );
+
+    //     $sekarang = now();
+
+    //     $sisaMenit = $sekarang->diffInMinutes($batas, false);
+
+    //     if ($sisaMenit <= 0 || $sisaMenit > 10) {
+    //         return;
+    //     }
+
+    //     $sisaMenit = round($sisaMenit);
+
+    //     $token = $peminjaman->siswa?->akunUser?->fcm_token;
+
+    //     if (!$token) {
+    //         $peminjaman->update([
+    //             'return_notif_status' => 'failed'
+    //         ]);
+    //         return;
+    //     }
+    //     $link = '/proses-pengembalian/' . $peminjaman->id_pinjam;
+    //     $sent = FCMService::send(
+    //         $token,
+    //         "Reminder Pengembalian [PJM-0$peminjaman->id_pinjam]",
+    //         "Peminjaman akan berakhir dalam {$sisaMenit} menit. Harap segera dikembalikan",
+    //         $link,
+    //         600
+
+
+    //     );
+
+    //     $peminjaman->update([
+    //         'return_notif_status' => $sent ? 'success' : 'failed'
+    //     ]);
+    // }
+
+
 
     public function prosesPesanAlat($request, AlatService $alatService)
     {
@@ -118,7 +237,8 @@ class PeminjamanService
             'jam_mulai' => $request->jam_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'jam_selesai' => $request->jam_selesai,
-            'is_reminder_sent' => false,
+            'pickup_notif_status' => 'pending',
+            'return_notif_status' => 'pending',
             'kelas_siswa' => Auth::user()->siswa->kelas
         ]);
 
@@ -149,7 +269,7 @@ class PeminjamanService
         foreach ($detailAlat as $id) {
             $dataPivot[$id] = [
                 'tanggal_pengembalian' => null,
-                'is_kembali' => false,
+                'is_scan_kembali' => false,
                 'kondisi_kembali' => null,
                 'catatan' => null,
                 'is_terlambat' => false
@@ -202,12 +322,12 @@ class PeminjamanService
 
         if (!$peminjaman) {
             return redirect()->route('peminjamanSiswa.index')
-                ->with('error', 'Alat ini tidak ada di daftar peminjaman! Silahkan lakukan peminjaman');
+                ->with('errorNotPeminjaman', 'Alat ini tidak ada di daftar peminjaman! Silahkan lakukan peminjaman');
         }
 
         if ($peminjaman->status_pinjam === 'menunggu') {
             return redirect()->route('peminjamanSiswa.index')
-                ->with('error', 'Belum memasuki waktu pemakaian');
+                ->with('errorMenunggu', 'Belum memasuki waktu pemakaian');
         }
 
         if ($peminjaman->status_pinjam === 'siap diambil') {
@@ -234,7 +354,7 @@ class PeminjamanService
                 if ($alat) {
                     $peminjaman->detailAlat()->updateExistingPivot(
                         $alat->id_detail_alat,
-                        ['is_kembali' => true]
+                        ['is_scan_kembali' => true]
                     );
                 }
             }
@@ -261,7 +381,7 @@ class PeminjamanService
             $status = $kondisi === 'baik' ? 'tersedia' : 'tidak tersedia';
 
             $peminjaman->detailAlat()->updateExistingPivot($idAlat, [
-                'is_kembali' => true,
+                // 'is_scan_kembali' => true,
                 'kondisi_kembali' => $kondisi,
                 'catatan' => $catatan,
                 'tanggal_pengembalian' => now(),

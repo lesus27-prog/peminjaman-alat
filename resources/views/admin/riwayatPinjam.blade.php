@@ -86,6 +86,7 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
+                                <th>ID Peminjaman</th>
                                 <th>Nama Siswa</th>
                                 <th>Kelas</th>
                                 <th>Alat</th>
@@ -100,9 +101,11 @@
                                     <td>
                                         <div class="no-badge">{{ $index + 1 }}.</div>
                                     </td>
+                                    <td>PJM-0{{ $item->id_pinjam }}</td>
                                     <td>{{ ucwords($item->siswa->nama_siswa) }}</td>
                                     <td>{{ strtoupper($item->siswa->kelas) }}</td>
-                                    <td class="td-detail">
+                                    <td class="td-detail"
+                                        data-tipe="{{ $item->tipeAlat->pluck('nama_tipe')->implode(', ') }}">
                                         <button class="btn-detail-soft btn-detail">
                                             <span class="icon-wrap">
                                                 <i class="fas fa-plus"></i>
@@ -130,10 +133,12 @@
                                             @endforeach
                                         </div>
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d M Y') }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d M Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai . ' ' . $item->jam_mulai)->locale('id')->translatedFormat('l, d M Y H:i') }}
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai . ' ' . $item->jam_selesai)->locale('id')->translatedFormat('l, d M Y H:i') }}
+                                    </td>
                                     <td>
-                                        @if ($item->is_terlambat == 1)
+                                        @if ($item->detailAlat->pluck('pivot.is_terlambat')->contains(1))
                                             <span class="badge badge-soft-danger rounded-pill" data-status="terlambat">
                                                 Terlambat
                                             </span>

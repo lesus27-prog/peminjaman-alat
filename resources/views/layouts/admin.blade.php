@@ -276,12 +276,12 @@
                                 Peminjaman</span>
                         </a>
                     </li>
-                    <li class="dropdown">
+                    {{-- <li class="dropdown">
                         <a href="{{ route('kondisiAlat.index') }}" class="dropdown-toggle no-arrow">
                             <span class="micon bi bi-bookmarks-fill"></span><span class="mtext">Alat
                                 Bermasalah</span>
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
         </div>

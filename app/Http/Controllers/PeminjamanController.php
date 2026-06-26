@@ -70,7 +70,7 @@ class PeminjamanController extends Controller
                 ->route($routeName, [
                     'tab' => $request->tab ?? 'menunggu'
                 ])
-                ->with('cancel_success', 'Peminjaman berhasil dibatalkan');
+                ->with('cancel_success', 'Peminjaman dengan berhasil dibatalkan');
                 
         } catch (\Exception $e) {
             $routeName = Auth::user()->role === 'admin'
@@ -150,6 +150,7 @@ class PeminjamanController extends Controller
             DB::beginTransaction();
             $peminjaman = $peminjamanService->prosesPesanAlat($request, $alatService);
             DB::commit();
+            $peminjamanService->updateStatus($peminjaman);
             return redirect()
                 ->route('alat.index')
                 ->with('prosesPemesananAlat_success', 'Peminjaman berhasil dibuat');
@@ -183,6 +184,7 @@ class PeminjamanController extends Controller
         $idSiswa = Auth::user()->siswa->id_siswa;
         $tab = $request->get('tab', 'menunggu');
 
+        
         // $peminjamans = Peminjaman::where('id_siswa', $idSiswa)->get();
 
         // update status otomatis
@@ -228,7 +230,7 @@ class PeminjamanController extends Controller
     public function riwayatAdminKabeng()
     {
         $tipes = TipeAlat::all();
-        $data = Peminjaman::with(['siswa', 'tipeAlat'])
+        $data = Peminjaman::with(['siswa', 'tipeAlat', 'detailAlat'])
             ->where('status_pinjam', 'selesai')
             ->get();
 

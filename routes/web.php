@@ -22,7 +22,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard-admin', [DashboardController::class, 'dashboardAdmin'])->name('dashboardAdmin.index');
     Route::get('/permintaan-peminjaman', [DashboardController::class, 'permintaanPinjam'])->name('permintaanPinjam.index');
-    Route::get('/tracking-alat', [DashboardController::class, 'tracking'])->name('tracking.index');
+
 
     Route::view('/add-siswa', 'admin.siswa.add')->name('siswa.add');
     Route::post('/store-siswa', [SiswaController::class, 'store'])->name('siswa.store');
@@ -59,6 +59,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/data-peminjaman', [PeminjamanController::class, 'adminIndex'])->name('peminjamanAdmin.index');
     Route::put('/validasi/{id}', [PeminjamanController::class, 'validasi'])->name('prosesPengembalian.validasi');
+});
+
+Route::middleware(['auth', 'role:admin,kabeng'])->group(function () {
+    Route::get('/tracking-alat', [DashboardController::class, 'tracking'])->name('tracking.index');
+    Route::get('/data-siswa', [SiswaController::class, 'siswaIndex'])->name('siswa.index');
+    Route::get('/data-tipe', [TipeAlatController::class, 'tipeIndex'])->name('tipe.index');
+    Route::get('/data-riwayat-peminjaman', [PeminjamanController::class, 'riwayatAdminKabeng'])->name('riwayatPinjamAdminKabeng.index');
+    Route::get('/data-kondisi-alat-bermasalah', [TipeAlatController::class, 'kondisiAlatIndex'])->name('kondisiAlat.index');
+    Route::get('/export-laporan-siswa', [SiswaController::class, 'exportLaporanSiswa']);
+    Route::get('/export-laporan-alat', [TipeAlatController::class, 'exportLaporanAlat']);
+    Route::get('/export-laporan-peminjaman', [PeminjamanController::class, 'exportLaporanPeminjaman']);
+    Route::get('/export-laporan-kondisi', [TipeAlatController::class, 'exportKondisi']);
 });
 
 Route::middleware(['auth', 'role:siswa'])->group(function () {
@@ -106,18 +118,25 @@ Route::middleware(['auth', 'role:admin,siswa'])->group(function () {
     Route::post('/peminjaman-cancel/{id}', [PeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
 });
 
-Route::middleware(['auth', 'role:admin,kabeng'])->group(function () {
-    Route::get('/data-siswa', [SiswaController::class, 'siswaIndex'])->name('siswa.index');
-    Route::get('/data-tipe', [TipeAlatController::class, 'tipeIndex'])->name('tipe.index');
-    Route::get('/data-riwayat-peminjaman', [PeminjamanController::class, 'riwayatAdminKabeng'])->name('riwayatPinjamAdminKabeng.index');
-    Route::get('/data-kondisi-alat-bermasalah', [TipeAlatController::class, 'kondisiAlatIndex'])->name('kondisiAlat.index');
-    Route::get('/export-laporan-siswa', [SiswaController::class, 'exportLaporanSiswa']);
-    Route::get('/export-laporan-alat', [TipeAlatController::class, 'exportLaporanAlat']);
-    Route::get('/export-laporan-peminjaman', [PeminjamanController::class, 'exportLaporanPeminjaman']);
-    Route::get('/export-laporan-kondisi', [TipeAlatController::class, 'exportKondisi']);
-});
 
 
+// Route::get('/test-fcm', function () {
+//     dd(
+//         config('app.url'),
+//         request()->getHost(),
+//         route('peminjaman.scan', ['id' => 9])
+//     );
+//     $token = 'dwahs2I-pXw-MRUjZX0bk_:APA91bF_sOjoK87-E5gkWFIgBEISw8I9eUfRRQmmrE4JppZUyD3hNkvZ4JlvVABwFin4gHBSvyWqMHlIdjG31gUxHaNIMyjTO8gfu7p4SvZlHeWjlQlis3k';
+
+//     $result = FCMService::send(
+//         $token,
+//         'Tes Notifikasi',
+//         'Ini notifikasi percobaan dari Laravel',
+//         17,
+//         3600
+
+//     );
+// });
 
 
 

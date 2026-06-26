@@ -13,12 +13,12 @@ class ReminderPeminjaman extends Command
 
     public function handle(PeminjamanService $service)
     {
-        Peminjaman::where('status_pinjam', 'aktif')->chunk(100, function ($data) use ($service) {
+        Peminjaman::where('status_pinjam', 'aktif')
+            ->where('return_notif_status', 'pending')
+            ->chunk(100, function ($data) use ($service) {
                 foreach ($data as $pinjam) {
                     $service->checkReminder($pinjam);
                 }
             });
-
-        $this->info("Reminder jalan");
     }
 }
