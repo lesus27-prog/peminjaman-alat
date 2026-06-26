@@ -92,15 +92,29 @@ $(document).ready(function () {
     });
 
     $("#modal-edit-data-siswa").on("hidden.bs.modal", function () {
+        clearTimeout(timer);
+
+        if (xhr) {
+            xhr.abort();
+            xhr = null;
+        }
+
         $("#error-nis").addClass("d-none").text("");
         $("#btn-edit").prop("disabled", false);
+
+        $("#nis").val("");
+        nisAwal = "";
     });
 
     // ========================= CHECK NIS EDIT =========================
     let timer;
-
+    let xhr = null;
     $("#nis").on("input", function () {
         clearTimeout(timer);
+        if (xhr) {
+            xhr.abort();
+            xhr = null;
+        }
 
         let nis = $(this).val().trim();
         let id = $("#id-siswa").val();
@@ -112,7 +126,7 @@ $(document).ready(function () {
         if (nis === "" || nis === nisAwal) return;
 
         timer = setTimeout(function () {
-            $.ajax({
+            xhr = $.ajax({
                 url: "/siswa/check-nis",
                 method: "POST",
                 data: {
