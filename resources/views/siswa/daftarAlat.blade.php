@@ -74,8 +74,8 @@
                                 <option value="13:45:00">13:45</option>
                                 <option value="14:30:00">14:30</option>
                                 <option value="15:15:00">15:15</option>
-                                <option value="22:40:00">22:40</option>
-                                <option value="00:40:00">00:40</option>
+                                <option value="19:00:00">19:00</option>
+                                <option value="20:30:00">20:30</option>
                             </select>
                         </div>
                     </div>
@@ -349,8 +349,8 @@
                                         <option value="13:45:00">13:45</option>
                                         <option value="14:30:00">14:30</option>
                                         <option value="15:15:00">15:15</option>
-                                        <option value="23:00:00">23:00</option>
-                                        <option value="21:53:00">21:53</option>
+                                        <option value="19:00:00">19:00</option>
+                                        <option value="20:30:00">20:30</option>
                                     </select>
                                 </div>
                             </div>
