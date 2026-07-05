@@ -36,8 +36,8 @@ class FCMService
                     'title' => $title,
                     'body' => $body,
                     'ttl' => (string) $ttl,
-                    'link' => 'https://peminjaman-alat-tkj-smkn7sby-production.up.railway.app' . $link,
-                    'icon' => 'https://peminjaman-alat-tkj-smkn7sby-production.up.railway.app/logo-smkn7-resmi.jpg',
+                    'link' => 'https://sipinjam-alat-tkj.up.railway.app' . $link,
+                    'icon' => 'https://sipinjam-alat-tkj.up.railway.app/logo-smkn7-resmi.jpg',
                 ],
             ];
 
