@@ -26,7 +26,7 @@ class FCMService
             //         'body' => $body,
             //         'ttl' => (string) $ttl,
             //         'link' => 'http://127.0.0.1:8000' . $link,
-            //         'icon' => 'https://peminjaman-alat-tkj-smk7sby.up.railway.app/logo-smkn7-resmi.jpg',
+            //         'icon' => 'https://sipinjam-alat-tkj.up.railway.app/logo-smkn7-resmi.jpg',
             //     ],
             // ];
 

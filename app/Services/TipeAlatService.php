@@ -33,11 +33,7 @@ class TipeAlatService
                 'qr_code' => $qrPath,
                 'status_alat' => 'tersedia'
             ]);
-
-            // $url = route(
-            //     'scan.qr',
-            //     $kode_alat
-            // );
+            
             $url = url('/scan/' . $kode_alat);
             QrCode::format('png')
                 ->errorCorrection('Q')

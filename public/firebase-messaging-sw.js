@@ -39,35 +39,3 @@ self.addEventListener("notificationclick", function (event) {
             }),
     );
 });
-
-// const messaging = firebase.messaging();
-
-// messaging.onBackgroundMessage(function (payload) {
-//     const title = payload.notification?.title;
-
-//     const body = payload.notification?.body;
-
-//     self.registration.showNotification(title, {
-//         body: body
-//     });
-// });
-
-// messaging.onBackgroundMessage(function (payload) {
-//     console.log("BG MESSAGE", payload);
-
-//     const title = payload.notification?.title || "Notifikasi";
-//     const options = {
-//         body: payload.notification?.body || "",
-//     };
-
-//     self.registration.showNotification(title, options);
-// });
-
-// messaging.setBackgroundMessageHandler(function (payload) {
-//     const title = payload.notification?.title || "Notifikasi";
-//     const options = {
-//         body: payload.notification?.body || "",
-//     };
-
-//     return self.registration.showNotification(title, options);
-// });
