@@ -75,7 +75,7 @@
                                 <option value="14:30:00">14:30</option>
                                 <option value="15:15:00">15:15</option>
                                 <option value="19:00:00">19:00</option>
-                                <option value="20:30:00">20:30</option>
+                                <option value="22:50:00">22:50</option>
                             </select>
                         </div>
                     </div>
