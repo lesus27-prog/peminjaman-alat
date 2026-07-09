@@ -13,6 +13,15 @@ class UpdatePeminjamanStatus extends Command
 
     public function handle(PeminjamanService $service)
     {
+        $this->info('Command dijalankan');
+
+        $jumlah = Peminjaman::whereIn('status_pinjam', [
+            'menunggu',
+            'siap diambil'
+        ])->count();
+
+        $this->info("Jumlah data: {$jumlah}");
+
         Peminjaman::whereIn('status_pinjam', [
             'menunggu',
             'siap diambil'
