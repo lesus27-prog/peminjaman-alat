@@ -104,7 +104,7 @@
                                             @endforeach
                                         </div>
                                     </td>
-                                    <td>{{ \Carbon\Carbon::parse($item->tanggal_mulai . ' ' . $item->jam_mulai)->locale('id')->translatedFormat('l, d-m-Y H:i') }}
+                                   <td data-date="{{ $item->tanggal_mulai }}">{{ \Carbon\Carbon::parse($item->tanggal_mulai . ' ' . $item->jam_mulai)->locale('id')->translatedFormat('l, d-m-Y H:i') }}
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($item->tanggal_selesai . ' ' . $item->jam_selesai)->locale('id')->translatedFormat('l, d-m-Y H:i') }}
                                     </td>

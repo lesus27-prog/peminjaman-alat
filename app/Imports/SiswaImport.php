@@ -45,10 +45,10 @@ class SiswaImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         // ==============================
 
 
-
+        $password = str_replace(['/', '.'], '', $row['nis']);
         $akun = AkunUser::create([
             'username' => (string) $row['nis'],
-            'password' => Hash::make($row['nis']),
+            'password' => Hash::make($password),
             'role' => 'siswa',
         ]);
 
@@ -61,7 +61,7 @@ class SiswaImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             'tahun_masuk' => strtolower($row['tahun_masuk']),
         ]);
 
-     
+
 
 
         return null;

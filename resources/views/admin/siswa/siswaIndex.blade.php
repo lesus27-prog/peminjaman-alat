@@ -265,7 +265,7 @@
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle me-2"></i>
                             <strong>Format File:</strong> Nama, Nis, Kelas, Jenis Kelamin, Tahun Masuk<br>
-                            <small>Contoh: Ryan, 1234, X TKJ 1, Laki-Laki, 2026</small>
+                            <small>Contoh: Giorgio, 22325/455.001, X TKJ 1, Laki-Laki, 2026</small>
                         </div>
                     </div>
                     <div class="modal-footer">

@@ -203,37 +203,63 @@ $(document).ready(function () {
     });
 
     // ===================== DATE FILTER DATATABLE =====================
-    $.fn.dataTable.ext.search.push(function (settings, data) {
-        console.log("Semua data row:", data);
-        let dateStr = data[5];
-        console.log("Tanggal dari tabel:", dateStr);
+    // $.fn.dataTable.ext.search.push(function (settings, data) {
+    //     console.log("Semua data row:", data);
+    //     let dateStr = data[5];
+    //     console.log("Tanggal dari tabel:", dateStr);
+    //     if (!dateStr) return true;
+
+    //     function parseDate(str) {
+    //         let [day, month, year] = str.split(" ");
+    //         let months = {
+    //             Jan: 0,
+    //             Feb: 1,
+    //             Mar: 2,
+    //             Apr: 3,
+    //             May: 4,
+    //             Jun: 5,
+    //             Jul: 6,
+    //             Aug: 7,
+    //             Sep: 8,
+    //             Oct: 9,
+    //             Nov: 10,
+    //             Dec: 11,
+    //         };
+    //         return new Date(year, months[month], day);
+    //     }
+
+    //     let rowDate = parseDate(dateStr);
+    //     console.log("rowDate:", rowDate);
+    //     console.log("start:", filterState.start);
+    //     console.log("end:", filterState.end);
+    //     let start = filterState.start;
+    //     let end = filterState.end;
+
+    //     if (start && !end) return rowDate >= start;
+    //     if (!start && end) return rowDate <= end;
+    //     if (start && end) return rowDate >= start && rowDate <= end;
+
+    //     return true;
+    // });
+
+    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+        let row = table.row(dataIndex).node();
+
+        // Ambil tanggal dari data-date
+        let dateStr = $(row).find("td").eq(5).data("date");
+
         if (!dateStr) return true;
 
-        function parseDate(str) {
-            let [day, month, year] = str.split(" ");
-            let months = {
-                Jan: 0,
-                Feb: 1,
-                Mar: 2,
-                Apr: 3,
-                May: 4,
-                Jun: 5,
-                Jul: 6,
-                Aug: 7,
-                Sep: 8,
-                Oct: 9,
-                Nov: 10,
-                Dec: 11,
-            };
-            return new Date(year, months[month], day);
-        }
+        let rowDate = new Date(dateStr);
 
-        let rowDate = parseDate(dateStr);
-        console.log("rowDate:", rowDate);
-        console.log("start:", filterState.start);
-        console.log("end:", filterState.end);
         let start = filterState.start;
         let end = filterState.end;
+
+        // supaya tanggal akhir sampai jam 23:59:59
+        if (end) {
+            end = new Date(end);
+            end.setHours(23, 59, 59, 999);
+        }
 
         if (start && !end) return rowDate >= start;
         if (!start && end) return rowDate <= end;

@@ -256,7 +256,7 @@
                     <div class="filter-card">
                         <div class="filter-label-wrapper">
                             <i class="bi bi-exclamation-triangle filter-icon"></i>
-                            <div class="filter-label">Kondisi Alat</div>
+                            <div class="filter-label">Kondisi Kembali</div>
                         </div>
                         <select id="filterKondisi" class="form-control filterKondisi filter-input" >
                             <option value="">All Kondisi</option>

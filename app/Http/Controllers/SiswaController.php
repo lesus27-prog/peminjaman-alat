@@ -44,11 +44,12 @@ class SiswaController extends Controller
             'tahun_masuk' => 'required|string'
         ]);
 
+        $password = str_replace(['/', '.'], '', $request->nis);
         try {
             DB::beginTransaction();
             $akun_user = AkunUser::create([
                 'username' => $request->nis,
-                'password' => Hash::make($request->nis),
+                'password' => Hash::make($password),
                 'role' => 'siswa',
                 'fcm_token' => null
             ]);
@@ -89,6 +90,7 @@ class SiswaController extends Controller
         ]);
 
         $siswa = Siswa::findOrFail($idSiswa);
+        $password = str_replace(['/', '.'], '', $request->nis);
         try {
             DB::beginTransaction();
             $siswa->update([
@@ -101,7 +103,7 @@ class SiswaController extends Controller
 
             $siswa->akunUser()->update([
                 'username' => $request->nis,
-                'password' => Hash::make($request->nis)
+                'password' => Hash::make($password)
             ]);
 
             DB::commit();

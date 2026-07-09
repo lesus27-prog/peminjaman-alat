@@ -81,7 +81,7 @@ class DashboardService
             ->groupByRaw('MONTH(tanggal_selesai)')
             ->pluck('total', 'bulan');
 
-            
+
         $pinjamBulanan = [];
 
         for ($i = 1; $i <= 12; $i++) {
@@ -159,9 +159,9 @@ class DashboardService
                         ->where('peminjaman_detail.kondisi_kembali', $request->kondisi_alat);
                 });
             })
-            ->orderByDesc('tanggal_mulai')
-            ->orderByDesc('jam_mulai')
+            ->orderBy('id_pinjam', 'desc')
             ->get();
+
 
         $riwayat = [];
 
@@ -189,7 +189,7 @@ class DashboardService
                 'tipe' => $alat->tipeAlat->nama_tipe,
                 'kondisi' => $alat->kondisi_alat,
                 'status' => $alat->status_alat,
-                'dipinjam' => $peminjaman->count(),
+                'dipinjam' => $alat->peminjaman()->count(),
                 'riwayat' => $riwayat
             ]
         ]);

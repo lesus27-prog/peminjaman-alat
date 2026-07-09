@@ -176,7 +176,7 @@ $(document).ready(function () {
                 if (data.riwayat.length === 0) {
                     rows = `
                     <tr>
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="9" class="text-center text-muted">
                             Tidak ada riwayat
                         </td>
                     </tr>

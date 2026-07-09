@@ -26,11 +26,11 @@ class AkunUserController extends Controller
             'password' => 'required',
             'role' => 'required|in:admin,kabeng',
         ]);
-
+        $password = str_replace(['/', '.'], '', $request->nis);
         try {
             AkunUser::create([
                 'username' => $request->username,
-                'password' => Hash::make($request->password),
+                'password' => Hash::make($password),
                 'role' => $request->role,
                 'fcm_token' => null
             ]);

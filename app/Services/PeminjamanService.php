@@ -302,7 +302,7 @@ class PeminjamanService
             ->whereHas('detailAlat', function ($q) use ($alat) {
                 $q->where('detail_alat.id_detail_alat', $alat->id_detail_alat);
             })
-            ->latest('id_pinjam')
+            // ->latest('id_pinjam')
             ->first();
 
         if ($peminjamanAktif) {

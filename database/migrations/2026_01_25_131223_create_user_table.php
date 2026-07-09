@@ -34,7 +34,7 @@ return new class extends Migration
                 ->constrained('akun_user', 'id_akun_user')
                 ->cascadeOnDelete();
             $table->string('nama_siswa');
-            $table->string('nis', 10)->unique();
+            $table->string('nis', 13)->unique();
             $table->string('kelas', 10);
             $table->enum('jenis_kelamin', [
                 'perempuan',
